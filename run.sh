@@ -35,9 +35,8 @@ if [ -f "./cloudflared" ]; then
     ./cloudflared tunnel --url http://localhost:8000 > /tmp/cloudflared.log 2>&1 &
     CF_PID=$!
     echo "⚡ Запущен Cloudflare HTTPS Tunnel (PID $CF_PID)"
-    # Ждем появления публичного HTTPS URL
-    for i in {1..12}; do
-        TUNNEL_URL=$(grep -o 'https://[a-zA-Z0-9.-]*\.trycloudflare\.com' /tmp/cloudflared.log | tail -n 1)
+    for i in {1..15}; do
+        TUNNEL_URL=$(grep -o 'https://[a-zA-Z0-9-]*\.trycloudflare\.com' /tmp/cloudflared.log | grep -v 'api.trycloudflare.com' | tail -n 1)
         if [ -n "$TUNNEL_URL" ]; then
             echo "📱 Публичный адрес Telegram Mini App: $TUNNEL_URL"
             $PYTHON_CMD -c "

@@ -7,6 +7,7 @@ import threading
 from typing import Dict, Any, Optional
 from database.db import get_setting, set_setting
 from services.ai_engine import process_invoice, get_demo_sample_invoice
+from services.radar import to_float
 from services.connectors.manager import IntegrationManager
 import config
 
@@ -46,6 +47,16 @@ class TelegramBotWorker:
         self.thread = threading.Thread(target=self._poll_loop, daemon=True)
         self.thread.start()
         print(f"Telegram Bot Worker запущен с токеном: {token[:10]}...")
+        
+        # Автоматическая настройка кнопки меню Telegram если есть HTTPS адрес
+        url = self.get_webapp_url()
+        if url.startswith("https://"):
+            try:
+                requests.post(f"https://api.telegram.org/bot{token}/setChatMenuButton", json={
+                    "menu_button": {"type": "web_app", "text": "📱 Открыть Mini App", "web_app": {"url": url}}
+                }, timeout=5)
+            except Exception:
+                pass
 
     def stop(self):
         self.running = False
@@ -241,16 +252,16 @@ class TelegramBotWorker:
         inv_num = inv.get("invoice_number", "б/н")
         cached_invoices[str(inv_num)] = inv
 
-        supplier = inv.get("supplier_name", "Не указан")
-        total = inv.get("total_amount", 0)
-        items = inv.get("items", [])
+        supplier = str(inv.get("supplier_name") or "Не указан")
+        total = to_float(inv.get("total_amount"), 0.0)
+        items = inv.get("items") or []
         spikes = [it for it in items if it.get("is_price_increase")]
 
         lines = []
         if inv.get("transcription"):
             lines.append(f"🎙️ *Распознанная речь:* «{inv['transcription']}»\n")
 
-        source_type = inv.get("source_type", "")
+        source_type = str(inv.get("source_type") or "")
         if "openai" in source_type:
             engine_badge = "🤖 *AI Engine: OpenAI (GPT-4o-mini + Whisper)*"
         elif "gemini" in source_type:
@@ -270,11 +281,11 @@ class TelegramBotWorker:
         if items:
             lines.append("📝 *Принятые товары:*")
             for it in items[:8]:
-                p_name = it.get("product_name", "")
-                qty = it.get("quantity", 0)
-                unit = it.get("unit", "шт")
-                pr = it.get("purchase_price", 0)
-                tot = it.get("total_price", qty * pr)
+                p_name = it.get("product_name") or it.get("raw_name") or "Товар"
+                qty = to_float(it.get("quantity"), 1.0)
+                unit = it.get("unit") or "шт"
+                pr = to_float(it.get("purchase_price"), 0.0)
+                tot = to_float(it.get("total_price"), qty * pr)
                 lines.append(f" • {p_name}: *{qty:g} {unit}* × {pr:,.0f} ₸ = {tot:,.0f} ₸".replace(",", " "))
             if len(items) > 8:
                 lines.append(f" _...и еще {len(items) - 8} поз._")
@@ -282,15 +293,15 @@ class TelegramBotWorker:
 
         if spikes:
             lines.append(f"🚨 *РАДАР МАРЖИ: ОБНАРУЖЕН РОСТ ЦЕН ({len(spikes)} поз.)!*")
-            loss = inv.get("total_potential_loss_kzt", 0)
+            loss = to_float(inv.get("total_potential_loss_kzt"), 0.0)
             lines.append(f"⚠️ *Риск потери прибыли:* {loss:,.0f} ₸ на этой партии!\n".replace(",", " "))
             
             for s in spikes:
-                p_name = s.get("product_name")
-                old_p = s.get("previous_price", 0)
-                new_p = s.get("purchase_price", 0)
-                pct = s.get("price_change_pct", 0)
-                rec_ret = s.get("recommended_retail_price", new_p * 1.25)
+                p_name = s.get("product_name") or "Товар"
+                old_p = to_float(s.get("previous_price"), 0.0)
+                new_p = to_float(s.get("purchase_price"), 0.0)
+                pct = to_float(s.get("price_change_pct"), 0.0)
+                rec_ret = to_float(s.get("recommended_retail_price"), new_p * 1.25)
                 lines.append(
                     f"🔻 *{p_name}*\n"
                     f"   Закуп: {old_p:,.0f} ₸ ➔ *{new_p:,.0f} ₸* (+{pct:.1f}%)\n"

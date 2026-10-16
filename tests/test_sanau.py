@@ -94,10 +94,39 @@ def test_integration_manager():
     assert len(results) == 4
     assert all(r.success for r in results)
 
+def test_null_handling_in_pricing_and_voice():
+    # Проверка устойчивости к None, null и нетипичным строкам из Whisper/LLM
+    raw_with_nulls = {
+        "invoice_number": None,
+        "supplier_name": None,
+        "items": [
+            {
+                "product_name": "Молоко 'Родина' 3.2%",
+                "purchase_price": None,
+                "quantity": None,
+                "total_price": None
+            },
+            {
+                "product_name": "Сахар песок",
+                "purchase_price": "450 тг",
+                "quantity": "2.5",
+                "total_price": None
+            }
+        ]
+    }
+    analyzed = analyze_invoice_pricing(raw_with_nulls)
+    assert analyzed["total_amount"] >= 0
+    assert len(analyzed["items"]) == 2
+    assert analyzed["items"][0]["purchase_price"] == 0.0
+    assert analyzed["items"][0]["quantity"] == 1.0
+    assert analyzed["items"][1]["purchase_price"] == 450.0
+    assert analyzed["items"][1]["quantity"] == 2.5
+
 if __name__ == "__main__":
     test_database_init_and_seed()
     test_radar_price_spike_detection()
     test_sql_connector_sync()
     test_connectors_formatting()
     test_integration_manager()
+    test_null_handling_in_pricing_and_voice()
     print("ALL TESTS PASSED SUCCESSFULLY! 🚀")

@@ -3,11 +3,16 @@ from database.db import get_connection
 
 def find_existing_product(name: str):
     """Поиск товара в каталоге с нечетким сопоставлением"""
+    if not name or not isinstance(name, str):
+        return None
+    name_str = name.strip()
+    if not name_str:
+        return None
     conn = get_connection()
     cursor = conn.cursor()
     
     # 1. Точное совпадение
-    cursor.execute("SELECT * FROM products WHERE LOWER(name) = LOWER(?)", (name.strip(),))
+    cursor.execute("SELECT * FROM products WHERE LOWER(name) = LOWER(?)", (name_str,))
     row = cursor.fetchone()
     if row:
         conn.close()
@@ -25,11 +30,28 @@ def find_existing_product(name: str):
     conn.close()
     return None
 
+def to_float(val: Any, default: float = 0.0) -> float:
+    """Безопасная конвертация любых значений (включая None, строки с пробелами и валютами) в float"""
+    if val is None:
+        return default
+    try:
+        if isinstance(val, (int, float)):
+            return float(val)
+        cleaned = str(val).replace("₸", "").replace("тг", "").replace(" ", "").replace(",", ".").strip()
+        if not cleaned or cleaned.lower() == "none" or cleaned.lower() == "null":
+            return default
+        return float(cleaned)
+    except Exception:
+        return default
+
 def analyze_invoice_pricing(raw_invoice: Dict[str, Any]) -> Dict[str, Any]:
     """
     Анализ маржинальности и детекция подорожаний
     """
-    items = raw_invoice.get("items", [])
+    if not isinstance(raw_invoice, dict):
+        raw_invoice = {}
+
+    items = raw_invoice.get("items") or []
     analyzed_items = []
     
     total_potential_loss = 0.0
@@ -37,18 +59,29 @@ def analyze_invoice_pricing(raw_invoice: Dict[str, Any]) -> Dict[str, Any]:
     total_sum = 0.0
     
     for it in items:
-        p_name = it.get("product_name", "").strip()
-        new_price = float(it.get("purchase_price", 0.0))
-        qty = float(it.get("quantity", 1.0))
-        total_line = new_price * qty
+        if not isinstance(it, dict):
+            continue
+            
+        p_name = str(it.get("product_name") or it.get("raw_name") or "Товар").strip()
+        new_price = to_float(it.get("purchase_price"), 0.0)
+        qty = to_float(it.get("quantity"), 1.0)
+        if qty <= 0:
+            qty = 1.0
+            
+        total_line = to_float(it.get("total_price"), new_price * qty)
+        if total_line <= 0 and new_price > 0:
+            total_line = new_price * qty
+            
         total_sum += total_line
         
         existing = find_existing_product(p_name)
         
         if existing:
-            old_price = float(existing.get("current_purchase_price", new_price))
-            curr_retail = float(existing.get("recommended_retail_price", old_price * 1.25))
-            target_margin_pct = float(existing.get("target_margin_pct", 20.0))
+            old_price = to_float(existing.get("current_purchase_price"), new_price)
+            if old_price <= 0:
+                old_price = new_price
+            curr_retail = to_float(existing.get("recommended_retail_price"), old_price * 1.25)
+            target_margin_pct = to_float(existing.get("target_margin_pct"), 20.0)
             
             diff = new_price - old_price
             diff_pct = (diff / old_price * 100.0) if old_price > 0 else 0.0
@@ -69,11 +102,11 @@ def analyze_invoice_pricing(raw_invoice: Dict[str, Any]) -> Dict[str, Any]:
                 rec_retail = curr_retail
                 
             analyzed_items.append({
-                "product_name": existing["name"],
+                "product_name": existing.get("name") or p_name,
                 "raw_name": p_name,
                 "category": existing.get("category", "Общее"),
                 "quantity": qty,
-                "unit": it.get("unit", existing.get("unit", "шт")),
+                "unit": str(it.get("unit") or existing.get("unit") or "шт"),
                 "purchase_price": new_price,
                 "previous_price": old_price,
                 "price_change_pct": round(diff_pct, 1),
@@ -89,9 +122,9 @@ def analyze_invoice_pricing(raw_invoice: Dict[str, Any]) -> Dict[str, Any]:
             analyzed_items.append({
                 "product_name": p_name,
                 "raw_name": p_name,
-                "category": it.get("category", "Новый товар"),
+                "category": str(it.get("category") or "Новый товар"),
                 "quantity": qty,
-                "unit": it.get("unit", "шт"),
+                "unit": str(it.get("unit") or "шт"),
                 "purchase_price": new_price,
                 "previous_price": None,
                 "price_change_pct": 0.0,
@@ -104,16 +137,19 @@ def analyze_invoice_pricing(raw_invoice: Dict[str, Any]) -> Dict[str, Any]:
             
     # Индекс стабильности поставщика: если 0 подорожаний = 100%, иначе снижается
     stability_score = max(0, 100 - (spikes_count * 25))
+    final_total = round(total_sum, 0) if total_sum > 0 else round(to_float(raw_invoice.get("total_amount")), 0)
     
     return {
-        "invoice_number": raw_invoice.get("invoice_number", "б/н"),
-        "supplier_name": raw_invoice.get("supplier_name", "ТОО 'Дистрибьютор'"),
-        "date": raw_invoice.get("date", "Сегодня"),
-        "total_amount": round(total_sum, 0),
+        "invoice_number": str(raw_invoice.get("invoice_number") or "б/н"),
+        "supplier_name": str(raw_invoice.get("supplier_name") or "ТОО 'Дистрибьютор'"),
+        "date": str(raw_invoice.get("date") or "Сегодня"),
+        "total_amount": final_total,
         "items": analyzed_items,
         "items_count": len(analyzed_items),
         "spikes_count": spikes_count,
         "total_potential_loss_kzt": round(total_potential_loss, 0),
         "supplier_stability_score": stability_score,
-        "source_type": raw_invoice.get("source_type", "photo")
+        "source_type": str(raw_invoice.get("source_type") or "photo"),
+        "transcription": str(raw_invoice.get("transcription") or ""),
+        "note": str(raw_invoice.get("note") or "")
     }

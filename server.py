@@ -44,6 +44,11 @@ def on_startup():
         set_setting("gemini_api_key", config.GEMINI_API_KEY)
     if config.TELEGRAM_BOT_TOKEN and not get_setting("telegram_token"):
         set_setting("telegram_token", config.TELEGRAM_BOT_TOKEN)
+        
+    env_webapp = os.getenv("WEBAPP_URL") or os.getenv("RENDER_EXTERNAL_URL")
+    if env_webapp:
+        set_setting("webapp_url", env_webapp.rstrip("/"))
+        
     bot_worker.start()
 
 app.add_middleware(
@@ -345,4 +350,5 @@ async def export_data(fmt: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("server:app", host="0.0.0.0", port=port, reload=False)

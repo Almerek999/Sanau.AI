@@ -33,6 +33,9 @@ INVOICE_PARSE_PROMPT = """
     }
   ]
 }
+ВАЖНО:
+- Поля quantity, purchase_price, total_price ОБЯЗАТЕЛЬНО должны быть числами (float или int), никогда не null.
+- Если цена не указана, ставь 0.0. Если количество не указано, ставь 1.0.
 """
 
 VOICE_PARSE_PROMPT = """
@@ -58,6 +61,9 @@ VOICE_PARSE_PROMPT = """
     }
   ]
 }
+ВАЖНО:
+- Поля quantity, purchase_price, total_price ОБЯЗАТЕЛЬНО должны быть числами (float или int), НИКОГДА не null и не строки.
+- Если цена не названа, ставь purchase_price: 0.0. Если количество не названо, ставь quantity: 1.0.
 """
 
 def clean_json_response(raw_text: str) -> str:
