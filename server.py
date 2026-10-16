@@ -46,6 +46,13 @@ def on_startup():
         set_setting("telegram_token", config.TELEGRAM_BOT_TOKEN)
         
     env_webapp = os.getenv("WEBAPP_URL") or os.getenv("RENDER_EXTERNAL_URL")
+    if not env_webapp:
+        railway_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN") or os.getenv("RAILWAY_STATIC_URL")
+        if railway_domain:
+            if not railway_domain.startswith("http"):
+                railway_domain = f"https://{railway_domain}"
+            env_webapp = railway_domain
+
     if env_webapp:
         set_setting("webapp_url", env_webapp.rstrip("/"))
         
