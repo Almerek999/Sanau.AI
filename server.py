@@ -88,16 +88,16 @@ class SettingsPayload(BaseModel):
     store_city: Optional[str] = None
     store_owner: Optional[str] = None
     store_margin: Optional[float] = None
-    google_sheets_url: Optional[str] = ""
-    google_enabled: Optional[bool] = True
-    telegram_token: Optional[str] = ""
-    telegram_chat_id: Optional[str] = ""
-    telegram_enabled: Optional[bool] = True
-    webhook_url: Optional[str] = ""
-    webhook_auth: Optional[str] = ""
-    webhook_enabled: Optional[bool] = True
-    gemini_api_key: Optional[str] = ""
-    openai_api_key: Optional[str] = ""
+    google_sheets_url: Optional[str] = None
+    google_enabled: Optional[bool] = None
+    telegram_token: Optional[str] = None
+    telegram_chat_id: Optional[str] = None
+    telegram_enabled: Optional[bool] = None
+    webhook_url: Optional[str] = None
+    webhook_auth: Optional[str] = None
+    webhook_enabled: Optional[bool] = None
+    gemini_api_key: Optional[str] = None
+    openai_api_key: Optional[str] = None
 
 @app.get("/api/store")
 async def get_store_profile():
