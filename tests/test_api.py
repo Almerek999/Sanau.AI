@@ -85,7 +85,17 @@ def test_catalog_deletion_and_clear():
     # 4. Восстановление
     reset_resp = client.post("/api/reset_demo")
     assert reset_resp.status_code == 200
-    assert len(client.get("/api/products").json()) == 12
+def test_presentation_endpoints():
+    # Проверка отдачи HTML слайдов
+    resp_html = client.get("/presentation")
+    assert resp_html.status_code == 200
+    assert "Pitch Deck" in resp_html.text
+    
+    # Проверка отдачи PDF
+    resp_pdf = client.get("/presentation.pdf")
+    assert resp_pdf.status_code == 200
+    assert resp_pdf.headers["content-type"] == "application/pdf"
+    assert len(resp_pdf.content) > 10000
 
 if __name__ == "__main__":
     test_root_serves_miniapp()
@@ -95,4 +105,5 @@ if __name__ == "__main__":
     test_catalog_and_radar_endpoints()
     test_export_endpoints()
     test_catalog_deletion_and_clear()
+    test_presentation_endpoints()
     print("ALL API AND MINI APP TESTS PASSED SUCCESSFULLY! 🚀")

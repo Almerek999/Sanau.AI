@@ -76,6 +76,31 @@ async def serve_miniapp():
         return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>Sanau.AI Mini App загружается...</h1>")
 
+@app.get("/presentation", response_class=HTMLResponse)
+@app.get("/pitch", response_class=HTMLResponse)
+async def serve_presentation():
+    pres_file = STATIC_DIR / "presentation.html"
+    if pres_file.exists():
+        return HTMLResponse(content=pres_file.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Презентация Sanau.AI загружается...</h1>")
+
+@app.get("/presentation.pdf")
+@app.get("/api/export/presentation")
+async def serve_presentation_pdf():
+    pdf_file = Path(__file__).resolve().parent / "presentation_pitch_deck.pdf"
+    if not pdf_file.exists():
+        try:
+            from generate_pitch_deck_pdf import generate_pdf
+            generate_pdf(str(pdf_file))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Ошибка генерации PDF: {e}")
+            
+    return FileResponse(
+        path=str(pdf_file),
+        media_type="application/pdf",
+        filename="Sanau_AI_Pitch_Deck.pdf"
+    )
+
 # ----------------- ПРОФИЛЬ МАГАЗИНА И НАСТРОЙКИ -----------------
 class StoreProfilePayload(BaseModel):
     name: Optional[str] = "Магазин «Береке»"
