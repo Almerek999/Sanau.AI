@@ -26,7 +26,7 @@ class WebhookConnector(BaseConnector):
             start_t = time.time()
             resp = requests.post(
                 self.endpoint_url,
-                json={"event": "ping", "system": "Qabyldau AI", "status": "active"},
+                json={"event": "ping", "system": "Sanau.AI", "status": "active"},
                 headers=headers,
                 timeout=5
             )
@@ -70,7 +70,7 @@ class WebhookConnector(BaseConnector):
 
         # Стандартизированный ERP / 1C REST Payload
         payload = {
-            "source": "Qabyldau AI",
+            "source": "Sanau.AI",
             "document_type": "ПриходнаяНакладная",
             "invoice_number": invoice_data.get("invoice_number", "б/н"),
             "date": invoice_data.get("date"),

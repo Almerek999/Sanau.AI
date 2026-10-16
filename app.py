@@ -15,7 +15,7 @@ import config
 
 # Настройка страницы
 st.set_page_config(
-    page_title="Qabyldau AI — Товаровед & Радар маржи",
+    page_title="Sanau.AI — Товаровед & Радар маржи",
     page_icon="📦",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -121,7 +121,7 @@ st.sidebar.markdown("#### 🏢 1C / ERP Webhook")
 webhook_enabled = st.sidebar.checkbox("Включить 1C/ERP Webhook", value=True)
 webhook_url = st.sidebar.text_input(
     "URL REST Webhook",
-    value=config.DEFAULT_WEBHOOK_URL or "https://webhook.site/demo-qabyldau",
+    value=config.DEFAULT_WEBHOOK_URL or "https://webhook.site/demo-sanau",
     placeholder="https://webhook.site/your-unique-id"
 )
 
@@ -170,7 +170,7 @@ gemini_key_input = st.sidebar.text_input(
 # ----------------- ШАПКА ПРИЛОЖЕНИЯ -----------------
 col_title, col_badges = st.columns([3, 1])
 with col_title:
-    st.markdown('<div class="main-header">📦 Qabyldau AI</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">📦 Sanau.AI</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">AI-товаровед, распознавание накладных и радар защиты маржи для МСБ Жамбылской области</div>', unsafe_allow_html=True)
 with col_badges:
     st.markdown("""
@@ -504,7 +504,7 @@ with tab_database:
         st.download_button(
             label="📥 Скачать каталог в Excel (.xlsx)",
             data=excel_buffer.getvalue(),
-            file_name="qabyldau_catalog_taraz.xlsx",
+            file_name="sanau_catalog_taraz.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True
         )
@@ -514,8 +514,8 @@ with tab_database:
         xml_data = f"""<?xml version="1.0" encoding="UTF-8"?>
 <КоммерческаяИнформация ВерсияСхемы="2.09" ДатаФормирования="{time.strftime('%Y-%m-%d')}">
   <Каталог СодержитТовары="true">
-    <Ид>QABYLDAU-TARAZ-001</Ид>
-    <Наименование>Основной каталог магазина Тараз</Наименование>
+    <Ид>SANAU-TARAZ-001</Ид>
+    <Наименование>Основной каталог Sanau.AI Тараз</Наименование>
     <Товары>
 """
         for _, row in df_products.iterrows():
@@ -532,7 +532,7 @@ with tab_database:
         st.download_button(
             label="📥 Скачать XML для 1C:Предприятие 8.3",
             data=xml_data,
-            file_name="qabyldau_1c_exchange.xml",
+            file_name="sanau_1c_exchange.xml",
             mime="application/xml",
             use_container_width=True
         )

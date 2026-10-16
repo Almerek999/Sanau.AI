@@ -8,7 +8,7 @@ client = TestClient(app)
 def test_root_serves_miniapp():
     resp = client.get("/")
     assert resp.status_code == 200
-    assert "Qabyldau AI" in resp.text
+    assert "Sanau.AI" in resp.text
     assert "telegram-web-app.js" in resp.text
 
 def test_settings_flow():
@@ -20,13 +20,13 @@ def test_settings_flow():
     
     # Сохранение настроек связывания сервисов
     save_resp = client.post("/api/settings", json={
-        "google_sheets_url": "https://script.google.com/macros/s/test-qabyldau",
+        "google_sheets_url": "https://script.google.com/macros/s/test-sanau",
         "telegram_chat_id": "999888777",
         "webhook_url": "https://webhook.site/test-1c"
     })
     assert save_resp.status_code == 200
     assert save_resp.json()["status"] == "success"
-    assert get_setting("google_sheets_url") == "https://script.google.com/macros/s/test-qabyldau"
+    assert get_setting("google_sheets_url") == "https://script.google.com/macros/s/test-sanau"
     assert get_setting("telegram_chat_id") == "999888777"
 
 def test_process_demo_invoice():

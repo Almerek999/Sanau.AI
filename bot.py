@@ -120,7 +120,7 @@ class TelegramBotWorker:
 
             if data == "miniapp_info":
                 info_msg = (
-                    "🌐 *Панель управления Qabyldau AI:*\n\n"
+                    "🌐 *Панель управления Sanau.AI:*\n\n"
                     "💻 *На компьютере:* откройте в браузере: http://localhost:8000\n\n"
                     "💡 *Для открытия внутри мобильного Telegram как Mini App:*\n"
                     "Telegram требует защищенную HTTPS ссылку. "
@@ -145,7 +145,7 @@ class TelegramBotWorker:
                 self._send_message(token, chat_id, report)
             elif data == "connect":
                 msg = (
-                    "⚙️ *Связывание сервисов с Qabyldau AI:*\n\n"
+                    "⚙️ *Связывание сервисов с Sanau.AI:*\n\n"
                     "1. Откройте панель управления: http://localhost:8000\n"
                     "2. В приложении перейдите во вкладку *«Сервисы»*.\n"
                     "3. Вставьте ссылку на Google Таблицу, 1C Webhook или OpenAI/Gemini API Key.\n"
@@ -173,7 +173,7 @@ class TelegramBotWorker:
         if msg_text.startswith("/start"):
             welcome_text = (
                 "👋 *Сәлеметсіз бе / Здравствуйте!*\n"
-                "Добро пожаловать в *Qabyldau AI* — мультимодальный AI-товаровед и радар маржи для предпринимателей г. Тараз и Жамбылской области.\n\n"
+                "Добро пожаловать в *Sanau.AI* — мультимодальный AI-товаровед и радар маржи для предпринимателей г. Тараз и Жамбылской области.\n\n"
                 "📦 *Что умеет бот:*\n"
                 "• 📸 *Фото накладной:* просто сфотографируйте бумажную накладную и пришлите сюда.\n"
                 "• 🎙️ *Голосовое сообщение:* надиктуйте приемку на казахском или русском (например: _«20 сүт Родина 440 теңгеден келді...»_).\n"
@@ -183,7 +183,7 @@ class TelegramBotWorker:
             )
             kb = {
                 "inline_keyboard": [
-                    [self._make_webapp_button("📱 Открыть Qabyldau Mini App")],
+                    [self._make_webapp_button("📱 Открыть Sanau.AI Mini App")],
                     [{"text": "⚡ Тест накладной (Демо со сцены)", "callback_data": "demo_test"}],
                     [{"text": "⚙️ Связать мои сервисы (Google/1C)", "callback_data": "connect"}]
                 ]

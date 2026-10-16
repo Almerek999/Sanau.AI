@@ -9,7 +9,7 @@ load_dotenv(BASE_DIR / ".env")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-DB_PATH = BASE_DIR / os.getenv("DB_PATH", "database/qabyldau.db")
+DB_PATH = BASE_DIR / os.getenv("DB_PATH", "database/sanau.db")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_DEFAULT_CHAT_ID = os.getenv("TELEGRAM_DEFAULT_CHAT_ID", "")
 DEFAULT_WEBHOOK_URL = os.getenv("DEFAULT_WEBHOOK_URL", "")

@@ -1,4 +1,4 @@
-# Qabyldau AI (Sanau.AI) 📦🚀
+# Sanau.AI 📦🚀
 
 > **Мультимодальный AI-товаровед, распознавание накладных и радар защиты маржи для малого и среднего бизнеса**  
 > Проект разработан для регионального хакатона **Zhambyl Hub (г. Тараз)** по треку **«AI for SME & Local Business»**.
@@ -14,7 +14,7 @@
 
 ---
 
-## 💡 Решение «Qabyldau AI»
+## 💡 Решение «Sanau.AI»
 
 Мультимодальная экосистема (Telegram Bot + Telegram Mini App + FastAPI Backend), которая за секунды:
 1. 📸 **Распознает бумажные накладные по фото:** нейросеть `GPT-4o-mini Vision` извлекает названия товаров, количество, единицы измерения и закупочные цены.
@@ -42,8 +42,8 @@
 
 ### 1. Клонирование и настройка окружения:
 ```bash
-git clone https://github.com/Almerek999/qabyldau-ai.git
-cd qabyldau-ai
+git clone https://github.com/Almerek999/sanau-ai.git
+cd sanau-ai
 
 python3 -m venv venv
 source venv/bin/activate
@@ -76,7 +76,7 @@ OPENAI_API_KEY=sk-proj-...
 ## 🧪 Запуск тестов
 ```bash
 PYTHONPATH=. ./venv/bin/python3 tests/test_api.py
-PYTHONPATH=. ./venv/bin/python3 tests/test_qabyldau.py
+PYTHONPATH=. ./venv/bin/python3 tests/test_sanau.py
 ```
 
 ---

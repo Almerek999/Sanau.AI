@@ -21,7 +21,7 @@ class TelegramConnector(BaseConnector):
             url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
             payload = {
                 "chat_id": self.chat_id,
-                "text": "🟢 *Qabyldau AI: Тест соединения успешен!*\nСервис готов получать уведомления о поставках и алерты цен.",
+                "text": "🟢 *Sanau.AI: Тест соединения успешен!*\nСервис готов получать уведомления о поставках и алерты цен.",
                 "parse_mode": "Markdown"
             }
             resp = requests.post(url, json=payload, timeout=5)
@@ -78,7 +78,7 @@ class TelegramConnector(BaseConnector):
         price_alerts = [item for item in items if item.get("is_price_increase")]
 
         text_lines = [
-            f"📦 *Qabyldau AI: Принята накладная №{inv_num}*",
+            f"📦 *Sanau.AI: Принята накладная №{inv_num}*",
             f"🏢 *Поставщик:* {supplier}",
             f"💰 *Общая сумма:* {total:,.0f} ₸".replace(",", " "),
             f"📋 *Позиций:* {len(items)}",

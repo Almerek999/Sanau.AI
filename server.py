@@ -33,7 +33,7 @@ if cursor.fetchone()[0] == 0:
     seed()
 conn.close()
 
-app = FastAPI(title="Qabyldau AI API", version="2.0")
+app = FastAPI(title="Sanau.AI API", version="2.0")
 
 @app.on_event("startup")
 def on_startup():
@@ -61,7 +61,7 @@ async def serve_miniapp():
     index_file = STATIC_DIR / "index.html"
     if index_file.exists():
         return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
-    return HTMLResponse("<h1>Qabyldau AI Mini App загружается...</h1>")
+    return HTMLResponse("<h1>Sanau.AI Mini App загружается...</h1>")
 
 # ----------------- НАСТРОЙКИ И ПРИВЯЗКА СЕРВИСОВ -----------------
 class SettingsPayload(BaseModel):
@@ -88,7 +88,7 @@ async def get_settings():
         "telegram_token": s.get("telegram_token", config.TELEGRAM_BOT_TOKEN),
         "telegram_chat_id": s.get("telegram_chat_id", config.TELEGRAM_DEFAULT_CHAT_ID),
         "telegram_enabled": s.get("telegram_enabled", "true") == "true",
-        "webhook_url": s.get("webhook_url", config.DEFAULT_WEBHOOK_URL or "https://webhook.site/demo-qabyldau"),
+        "webhook_url": s.get("webhook_url", config.DEFAULT_WEBHOOK_URL or "https://webhook.site/demo-sanau"),
         "webhook_auth": s.get("webhook_auth", ""),
         "webhook_enabled": s.get("webhook_enabled", "true") == "true",
         "gemini_api_key_configured": bool(s.get("gemini_api_key") or config.GEMINI_API_KEY),
@@ -304,14 +304,14 @@ async def export_data(fmt: str):
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            headers={"Content-Disposition": "attachment; filename=qabyldau_taraz.xlsx"}
+            headers={"Content-Disposition": "attachment; filename=sanau_taraz.xlsx"}
         )
     elif fmt == "xml":
         xml_str = f"""<?xml version="1.0" encoding="UTF-8"?>
 <КоммерческаяИнформация ВерсияСхемы="2.09" ДатаФормирования="{time.strftime('%Y-%m-%d')}">
   <Каталог СодержитТовары="true">
-    <Ид>QABYLDAU-TARAZ-001</Ид>
-    <Наименование>Основной каталог магазина Тараз</Наименование>
+    <Ид>SANAU-TARAZ-001</Ид>
+    <Наименование>Основной каталог Sanau.AI Тараз</Наименование>
     <Товары>
 """
         for p in products:
@@ -328,7 +328,7 @@ async def export_data(fmt: str):
         return Response(
             content=xml_str,
             media_type="application/xml",
-            headers={"Content-Disposition": "attachment; filename=qabyldau_1c.xml"}
+            headers={"Content-Disposition": "attachment; filename=sanau_1c.xml"}
         )
     elif fmt == "kaspi":
         lines = ["model;price;availabilities"]

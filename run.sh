@@ -26,7 +26,7 @@ if ! $PYTHON_CMD -c "import sys" 2>/dev/null; then
 fi
 
 echo "=========================================================="
-echo "🚀 Запуск Qabyldau AI: Backend + Telegram Mini App + Bot"
+echo "🚀 Запуск Sanau.AI: Backend + Telegram Mini App + Bot"
 echo "🌐 Локальный адрес: http://localhost:8000"
 echo "=========================================================="
 

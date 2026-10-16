@@ -27,7 +27,7 @@ class GoogleSheetsConnector(BaseConnector):
             # Отправка тестового пинга
             test_payload = {
                 "action": "ping",
-                "message": "Тестовое подключение Qabyldau AI",
+                "message": "Тестовое подключение Sanau.AI",
                 "timestamp": "now"
             }
             resp = requests.post(self.webhook_url, json=test_payload, timeout=6)

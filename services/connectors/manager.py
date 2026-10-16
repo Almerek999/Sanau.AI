@@ -21,7 +21,7 @@ class IntegrationManager:
             "telegram_token": db_settings.get("telegram_token", config.TELEGRAM_BOT_TOKEN),
             "telegram_chat_id": db_settings.get("telegram_chat_id", config.TELEGRAM_DEFAULT_CHAT_ID),
             "webhook_enabled": db_settings.get("webhook_enabled", "true").lower() in ("true", "1"),
-            "webhook_url": db_settings.get("webhook_url", config.DEFAULT_WEBHOOK_URL or "https://webhook.site/demo-qabyldau"),
+            "webhook_url": db_settings.get("webhook_url", config.DEFAULT_WEBHOOK_URL or "https://webhook.site/demo-sanau"),
             "webhook_auth": db_settings.get("webhook_auth", "")
         }
         
