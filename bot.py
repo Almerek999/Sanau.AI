@@ -143,6 +143,12 @@ class TelegramBotWorker:
             if data == "demo_test":
                 inv = process_invoice(sample_id="spike_milk_flour")
                 self._send_invoice_report(token, chat_id, inv)
+            elif data == "demo_kazakh":
+                inv = process_invoice(sample_id="kazakh_voice")
+                self._send_invoice_report(token, chat_id, inv)
+            elif data == "edit_store":
+                curr_name = get_setting("store_name", "Магазин «Береке»")
+                self._send_message(token, chat_id, f"🏪 Текущее название: *{curr_name}*\n\nЧтобы изменить его, просто отправьте сообщение:\n`/store Новое Название`")
             elif data.startswith("sync_"):
                 inv_key = data.replace("sync_", "")
                 inv = cached_invoices.get(inv_key) or get_demo_sample_invoice("spike_milk_flour")
@@ -157,7 +163,7 @@ class TelegramBotWorker:
             elif data == "connect":
                 msg = (
                     "⚙️ *Связывание сервисов с Sanau.AI:*\n\n"
-                    "1. Откройте панель управления: http://localhost:8000\n"
+                    "1. Откройте панель управления через кнопку ниже\n"
                     "2. В приложении перейдите во вкладку *«Сервисы»*.\n"
                     "3. Вставьте ссылку на Google Таблицу, 1C Webhook или OpenAI/Gemini API Key.\n"
                     "4. Нажмите *«Тест соединения»* — и данные будут поступать мгновенно!"
@@ -180,23 +186,45 @@ class TelegramBotWorker:
         msg_text = message.get("text", "")
         print(f"📩 Новое сообщение от {chat_id}: {msg_text or 'медиафайл'}")
 
+        # Команда /store для персонализации магазина
+        if msg_text.startswith("/store"):
+            parts = msg_text.split(" ", 1)
+            if len(parts) > 1 and parts[1].strip():
+                new_name = parts[1].strip()
+                set_setting("store_name", new_name)
+                self._send_message(token, chat_id, f"✅ Торговая точка успешно обновлена:\n🏪 *{new_name}*\n\nТеперь все накладные, 1С-выгрузки и радар маржи привязаны к вашему магазину!")
+            else:
+                curr_name = get_setting("store_name", "Магазин «Береке»")
+                curr_city = get_setting("store_city", "г. Тараз")
+                self._send_message(token, chat_id, f"🏪 *Текущий магазин:* {curr_name}\n📍 *Город:* {curr_city}\n\nЧтобы изменить название, отправьте команду:\n`/store Название Вашего Магазина`\n\n_Например:_\n`/store Продукты у Дома (Тараз)`")
+            return
+
         # Команда /start
         if msg_text.startswith("/start"):
+            store_name = get_setting("store_name", "Магазин «Береке»")
+            store_city = get_setting("store_city", "г. Тараз")
             welcome_text = (
-                "👋 *Сәлеметсіз бе / Здравствуйте!*\n"
-                "Добро пожаловать в *Sanau.AI* — мультимодальный AI-товаровед и радар маржи для предпринимателей г. Тараз и Жамбылской области.\n\n"
-                "📦 *Что умеет бот:*\n"
-                "• 📸 *Фото накладной:* просто сфотографируйте бумажную накладную и пришлите сюда.\n"
-                "• 🎙️ *Голосовое сообщение:* надиктуйте приемку на казахском или русском (например: _«20 сүт Родина 440 теңгеден келді...»_).\n"
-                "• 🚨 *Радар маржи:* ИИ мгновенно выявит скрытое подорожание товара и рассчитает новую цену розницы.\n"
-                "• 🔌 *Интеграции:* мгновенная запись в Google Sheets, 1C и базу данных магазина.\n\n"
-                "💻 *Панель управления:* http://localhost:8000"
+                "👋 *Сәлеметсіз бе! Вас приветствует Sanau.AI 2.0*\n"
+                "Мультимодальный AI-товаровед и Радар защиты маржи для МСБ.\n\n"
+                f"🏪 *Торговая точка:* {store_name} ({store_city})\n\n"
+                "📦 *Что умеет бот в реальном времени:*\n"
+                "• 🎙️ *Голосовая приемка:* отправьте голосовое сообщение на казахском или русском (например: _«20 сүт Родина 440 теңгеден келді...»_).\n"
+                "• 📸 *Фото накладной:* сфотографируйте бумажную накладную или чек прямо с камеры.\n"
+                "• 🚨 *Радар маржи:* ИИ мгновенно выявит скрытое подорожание товара и рассчитает новую розничную цену для защиты маржи магазина.\n"
+                "• 🔌 *Сквозная синхронизация:* одним кликом вносит товары в Google Таблицы и 1С.\n\n"
+                "💡 *Совет:* Вы можете изменить название магазина прямо здесь командой `/store [Название]` или в Mini App!"
             )
             kb = {
                 "inline_keyboard": [
                     [self._make_webapp_button("📱 Открыть Sanau.AI Mini App")],
-                    [{"text": "⚡ Тест накладной (Демо со сцены)", "callback_data": "demo_test"}],
-                    [{"text": "⚙️ Связать мои сервисы (Google/1C)", "callback_data": "connect"}]
+                    [
+                        {"text": "⚡ Тест для Жюри (Кейс: Рост цен)", "callback_data": "demo_test"},
+                        {"text": "🇰🇿 Голос (Казахский образец)", "callback_data": "demo_kazakh"}
+                    ],
+                    [
+                        {"text": "🏪 Сменить магазин (/store)", "callback_data": "edit_store"},
+                        {"text": "⚙️ Связать сервисы", "callback_data": "connect"}
+                    ]
                 ]
             }
             self._send_message(token, chat_id, welcome_text, reply_markup=kb)
@@ -251,6 +279,13 @@ class TelegramBotWorker:
         webapp_url = self.get_webapp_url()
         inv_num = inv.get("invoice_number", "б/н")
         cached_invoices[str(inv_num)] = inv
+
+        # Автоматически сохраняем накладную в SQLite базу магазина
+        try:
+            from services.connectors.sql_connector import SqlDatabaseConnector
+            SqlDatabaseConnector().sync_invoice(inv)
+        except Exception as e:
+            print(f"Error auto-saving invoice to SQL: {e}")
 
         supplier = str(inv.get("supplier_name") or "Не указан")
         total = to_float(inv.get("total_amount"), 0.0)

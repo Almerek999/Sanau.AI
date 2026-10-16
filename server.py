@@ -68,8 +68,18 @@ async def serve_miniapp():
         return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>Sanau.AI Mini App загружается...</h1>")
 
-# ----------------- НАСТРОЙКИ И ПРИВЯЗКА СЕРВИСОВ -----------------
+# ----------------- ПРОФИЛЬ МАГАЗИНА И НАСТРОЙКИ -----------------
+class StoreProfilePayload(BaseModel):
+    name: Optional[str] = "Магазин «Береке»"
+    city: Optional[str] = "г. Тараз"
+    owner: Optional[str] = "Владелец / Товаровед"
+    target_margin_pct: Optional[float] = 25.0
+
 class SettingsPayload(BaseModel):
+    store_name: Optional[str] = None
+    store_city: Optional[str] = None
+    store_owner: Optional[str] = None
+    store_margin: Optional[float] = None
     google_sheets_url: Optional[str] = ""
     google_enabled: Optional[bool] = True
     telegram_token: Optional[str] = ""
@@ -81,6 +91,31 @@ class SettingsPayload(BaseModel):
     gemini_api_key: Optional[str] = ""
     openai_api_key: Optional[str] = ""
 
+@app.get("/api/store")
+async def get_store_profile():
+    s = get_all_settings()
+    return {
+        "name": s.get("store_name", "Магазин «Береке»"),
+        "city": s.get("store_city", "г. Тараз"),
+        "owner": s.get("store_owner", "Владелец / Товаровед"),
+        "target_margin_pct": float(s.get("store_margin", "25.0"))
+    }
+
+@app.post("/api/store")
+async def update_store_profile(payload: StoreProfilePayload):
+    if payload.name:
+        set_setting("store_name", payload.name.strip())
+    if payload.city:
+        set_setting("store_city", payload.city.strip())
+    if payload.owner:
+        set_setting("store_owner", payload.owner.strip())
+    if payload.target_margin_pct is not None:
+        set_setting("store_margin", str(payload.target_margin_pct))
+    return {
+        "status": "success",
+        "message": f"Профиль магазина «{payload.name or 'Мой магазин'}» успешно сохранен!"
+    }
+
 @app.get("/api/settings")
 async def get_settings():
     s = get_all_settings()
@@ -88,6 +123,10 @@ async def get_settings():
     all_connectors = manager.get_all_connectors()
     
     return {
+        "store_name": s.get("store_name", "Магазин «Береке»"),
+        "store_city": s.get("store_city", "г. Тараз"),
+        "store_owner": s.get("store_owner", "Владелец / Товаровед"),
+        "store_margin": float(s.get("store_margin", "25.0")),
         "google_sheets_url": s.get("google_sheets_url", ""),
         "google_enabled": s.get("google_enabled", "true") == "true",
         "telegram_token": s.get("telegram_token", config.TELEGRAM_BOT_TOKEN),
@@ -109,6 +148,14 @@ async def get_settings():
 
 @app.post("/api/settings")
 async def update_settings(payload: SettingsPayload):
+    if payload.store_name is not None:
+        set_setting("store_name", payload.store_name.strip())
+    if payload.store_city is not None:
+        set_setting("store_city", payload.store_city.strip())
+    if payload.store_owner is not None:
+        set_setting("store_owner", payload.store_owner.strip())
+    if payload.store_margin is not None:
+        set_setting("store_margin", str(payload.store_margin))
     if payload.google_sheets_url is not None:
         set_setting("google_sheets_url", payload.google_sheets_url)
     if payload.google_enabled is not None:
@@ -133,7 +180,7 @@ async def update_settings(payload: SettingsPayload):
     if payload.openai_api_key is not None and payload.openai_api_key.strip():
         set_setting("openai_api_key", payload.openai_api_key.strip())
         
-    return {"status": "success", "message": "Настройки сервисов и API ключи успешно сохранены и привязаны"}
+    return {"status": "success", "message": "Настройки магазина и сервисов успешно сохранены"}
 
 @app.post("/api/test_connector")
 async def test_connector(req: Dict[str, str]):
@@ -161,6 +208,9 @@ async def test_connector(req: Dict[str, str]):
 async def process_photo(file: UploadFile = File(...)):
     image_bytes = await file.read()
     analyzed = process_invoice(image_bytes=image_bytes)
+    # Автоматически сохраняем в локальную БД для немедленного отображения в каталоге
+    from services.connectors.sql_connector import SqlDatabaseConnector
+    SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 @app.post("/api/process/voice")
@@ -168,6 +218,8 @@ async def process_voice(file: UploadFile = File(...)):
     audio_bytes = await file.read()
     mime = file.content_type or "audio/ogg"
     analyzed = process_invoice(audio_bytes=audio_bytes, audio_mime=mime)
+    from services.connectors.sql_connector import SqlDatabaseConnector
+    SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 class TextPayload(BaseModel):
@@ -176,6 +228,8 @@ class TextPayload(BaseModel):
 @app.post("/api/process/text")
 async def process_text(payload: TextPayload):
     analyzed = process_invoice(voice_text=payload.text)
+    from services.connectors.sql_connector import SqlDatabaseConnector
+    SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 class DemoPayload(BaseModel):
@@ -184,12 +238,25 @@ class DemoPayload(BaseModel):
 @app.post("/api/reset_demo")
 async def reset_demo_database():
     seed()
-    return {"status": "success", "message": "База данных сброшена к эталонным ценам Тараза (молоко 390 ₸, мука 680 ₸)"}
+    return {"status": "success", "message": "База данных сброшена к эталонным ценам Тараза"}
 
 @app.post("/api/process/demo")
 async def process_demo(payload: DemoPayload):
     analyzed = process_invoice(sample_id=payload.sample_id)
+    from services.connectors.sql_connector import SqlDatabaseConnector
+    SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
+
+@app.post("/api/clear_data")
+async def clear_store_data():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM invoice_items")
+    cursor.execute("DELETE FROM invoices")
+    cursor.execute("DELETE FROM sync_logs")
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": "Журнал накладных и аналитика радара очищены. Начните приемку для вашего магазина."}
 
 # ----------------- СИНХРОНИЗАЦИЯ ВО ВСЕ СЕРВИСЫ -----------------
 @app.post("/api/sync")
@@ -213,6 +280,20 @@ async def get_products():
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+@app.get("/api/invoices/latest")
+async def get_latest_invoice():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT raw_data FROM invoices ORDER BY id DESC LIMIT 1")
+    row = cursor.fetchone()
+    conn.close()
+    if row and row[0]:
+        try:
+            return json.loads(row[0])
+        except Exception:
+            pass
+    return None
 
 @app.get("/api/invoices")
 async def get_invoices():
@@ -255,24 +336,15 @@ async def get_radar_stats():
     recent_spikes = [dict(r) for r in cursor.fetchall()]
     conn.close()
     
-    # Дополняем эталонными данными, если накладных мало
-    if not recent_spikes:
-        recent_spikes = [
-            {"product_name": "Молоко 'Родина' 3.2% 1л", "supplier_name": "ТОО 'Прима Дистрибьюшн'", "previous_price": 390, "purchase_price": 440, "price_change_pct": 12.8, "quantity": 25, "unit": "шт"},
-            {"product_name": "Мука пшеничная 'Цесна' 2кг", "supplier_name": "ТОО 'Прима Дистрибьюшн'", "previous_price": 680, "purchase_price": 760, "price_change_pct": 11.7, "quantity": 10, "unit": "шт"},
-            {"product_name": "Масло растительное 'Шедевр' 1л", "supplier_name": "ИП 'Ахметов' (Аулие-Ата)", "previous_price": 750, "purchase_price": 840, "price_change_pct": 12.0, "quantity": 20, "unit": "шт"},
-            {"product_name": "Сыр 'President' Сливочный 200г", "supplier_name": "ТОО 'Эмиль'", "previous_price": 1100, "purchase_price": 1250, "price_change_pct": 13.6, "quantity": 10, "unit": "шт"},
-        ]
-        spikes_count = max(spikes_count, len(recent_spikes))
-        saved_margin = max(saved_margin, 38400.0)
-        
+    stability = 100 if spikes_count == 0 else max(20, 100 - (spikes_count * 15))
+    
     return {
-        "invoices_count": max(inv_count, 18),
-        "total_spend_kzt": max(total_sum, 642800.0),
+        "invoices_count": inv_count,
+        "total_spend_kzt": round(total_sum, 0),
         "spikes_count": spikes_count,
-        "saved_margin_kzt": saved_margin,
+        "saved_margin_kzt": round(saved_margin, 0),
         "recent_spikes": recent_spikes,
-        "stability_index_pct": 87
+        "stability_index_pct": stability
     }
 
 @app.get("/api/sync_logs")
