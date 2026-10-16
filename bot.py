@@ -241,30 +241,6 @@ class TelegramBotWorker:
             self._send_message(token, chat_id, "🔄 *Каталог успешно сброшен к базовым 12 товарам Тараза.*")
             return
 
-        # Команда /presentation или /pitch для просмотра слайдов и скачивания PDF
-        if msg_text.startswith("/presentation") or msg_text.startswith("/pitch"):
-            web_url = self.get_webapp_url()
-            pres_url = f"{web_url}/presentation"
-            pdf_url = f"{web_url}/presentation.pdf"
-            text = (
-                "📊 *Презентация Sanau.AI (Pitch Deck)*\n\n"
-                "• 10 профессиональных слайдов для защиты проекта\n"
-                "• Анализ рынка, боль МСБ розницы и утечка маржи\n"
-                "• Финансовая модель: B2B SaaS, тарифы, юнит-экономика LTV/CAC\n"
-                "• Технологический стек и сквозные интеграции\n\n"
-                f"🖥️ *Слайды онлайн:* {pres_url}\n"
-                f"📥 *Файл PDF:* {pdf_url}"
-            )
-            kb = {
-                "inline_keyboard": [
-                    [{"text": "🖥️ Открыть слайды", "url": pres_url}],
-                    [{"text": "📥 Скачать PDF презентацию", "url": pdf_url}],
-                    [self._make_webapp_button("📱 Открыть Mini App")]
-                ]
-            }
-            self._send_message(token, chat_id, text, reply_markup=kb)
-            return
-
         # Команда /start
         if msg_text.startswith("/start"):
             store_name = get_setting("store_name", "Магазин «Береке»")
@@ -281,7 +257,6 @@ class TelegramBotWorker:
                 "• 🔌 *Сквозная синхронизация:* одним кликом вносит товары в Google Таблицы и 1С.\n\n"
                 "💡 *Команды бота:*\n"
                 "• `/store [Название]` — изменить имя магазина\n"
-                "• `/presentation` — открыть презентацию проекта (Pitch Deck & PDF)\n"
                 "• `/clear` — полностью очистить каталог и старые накладные\n"
                 "• `/reset` — восстановить базовый каталог Тараза (12 товаров)"
             )

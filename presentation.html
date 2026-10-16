@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanau.AI — Презентация проекта (Pitch Deck)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+    
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Фоновое неоновое свечение */
+    .glow-bg {
+      background-color: #070a13;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 85% 90%, rgba(14, 165, 233, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    }
+
+    /* Стеклянные карточки (Glassmorphism) */
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    
+    .glass-card-hover {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 16px 36px -12px rgba(99, 102, 241, 0.25);
+    }
+
+    /* Анимация переключения слайдов */
+    .slide-enter {
+      animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ==========================================================
+       ИДЕАЛЬНАЯ ПЕЧАТЬ В PDF (A4 / 16:9 Landscape)
+       ========================================================== */
+    @media print {
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+      body {
+        background: #070a13 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+      .slide-viewport {
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        max-width: 100vw !important;
+        min-height: 100vh !important;
+        background: #070a13 !important;
+      }
+      .slide, .slide.hidden {
+        display: flex !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        height: 100vh !important;
+        width: 100vw !important;
+        padding: 2.5rem 3.5rem !important;
+        box-sizing: border-box !important;
+      }
+      #speaker-notes-drawer {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white glow-bg">
+
+  <!-- ================= TOP PROGRESS BAR ================= -->
+  <div class="no-print w-full bg-slate-900/60 h-1 fixed top-0 left-0 z-50">
+    <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-sky-400 to-emerald-400 transition-all duration-300 w-[10%]"></div>
+  </div>
+
+  <!-- ================= HEADER CONTROLS (NO-PRINT) ================= -->
+  <header class="no-print bg-[#0c1222]/85 backdrop-blur-xl border-b border-slate-800 sticky top-0 z-40 px-4 py-2.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/25">
+        S
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-extrabold tracking-tight text-white">Sanau.AI</span>
+          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Official Pitch Deck</span>
+        </div>
+        <p class="text-[11px] text-slate-400">Мультимодальный AI-товаровед & Радар маржи</p>
+      </div>
+    </div>
+
+    <!-- Инструменты управления -->
+    <div class="flex items-center space-x-2">
+      <!-- Счетчик слайдов -->
+      <div class="text-xs text-slate-300 font-mono bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+        <span id="current-slide-badge" class="text-white font-black text-sm">1</span> <span class="text-slate-500">/ 10</span>
+      </div>
+
+      <!-- Кнопки Назад / Вперед -->
+      <div class="flex items-center bg-slate-800/80 rounded-lg border border-slate-700 p-0.5">
+        <button onclick="prevSlide()" class="p-1.5 hover:bg-slate-700 rounded-md text-slate-300 hover:text-white transition active:scale-90" title="Назад (←)">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <button onclick="nextSlide()" class="p-1.5 hover:bg-slate-700 rounded-md text-slate-300 hover:text-white transition active:scale-90" title="Вперед (→ или Пробел)">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Кнопка заметок спикера -->
+      <button onclick="toggleSpeakerNotes()" id="btn-notes" class="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95" title="Заметки для речи (клавиша N)">
+        <i data-lucide="message-square-text" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span class="hidden md:inline">Речь спикера</span>
+      </button>
+
+      <!-- ГЛАВНАЯ КНОПКА: СКАЧАТЬ В PDF -->
+      <a href="presentation_pitch_deck.pdf" download="Sanau_AI_Pitch_Deck.pdf" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/30 active:scale-95 transition" title="Скачать готовый скомпилированный PDF файл">
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <span>Скачать PDF</span>
+      </a>
+
+      <!-- Печать браузера в PDF -->
+      <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-md shadow-indigo-600/25 active:scale-95 transition" title="Распечатать или сохранить слайды через браузер">
+        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Печать</span>
+      </button>
+
+      <!-- На весь экран -->
+      <button onclick="toggleFullScreen()" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition active:scale-95" title="На весь экран (F)">
+        <i data-lucide="maximize" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN SLIDE VIEWPORT ================= -->
+  <main class="flex-1 flex items-center justify-center p-3 sm:p-5 lg:p-6">
+    <div class="slide-viewport w-full max-w-6xl aspect-[16/10] sm:aspect-[16/9] min-h-[580px] glass-card rounded-2xl shadow-2xl overflow-hidden flex flex-col justify-between p-6 sm:p-10 relative border border-slate-700/70">
+
+      <!-- ================= SLIDE 1: ТИТУЛЬНЫЙ ================= -->
+      <div class="slide slide-enter flex-1 flex flex-col justify-between" id="slide-1" data-notes="Здравствуйте! Меня зовут [Имя], и мы представляем Sanau.AI — мультимодального ИИ-товароведа, который спасает магазины у дома от скрытого роста цен и автоматизирует рутину с накладными прямо со смартфона за 2 секунды. На слайде есть QR-код — вы можете отсканировать его прямо сейчас и увидеть живого бота в действии.">
+        <div class="flex items-start justify-between">
+          <div class="max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold mb-3">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              RETAIL TECH • AI FOR LOCAL BUSINESS • ЖАМБЫЛ
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none mb-2">
+              Sanau.AI <span class="text-indigo-400">📦⚡</span>
+            </h1>
+            <p class="text-lg sm:text-2xl font-bold text-sky-400 mb-3">
+              Мультимодальный AI-товаровед и радар защиты маржи
+            </p>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+              От бумажного чека и живого голоса на складе — до автоматической 1С и сохраненной прибыли за 3 секунды.
+            </p>
+          </div>
+
+          <!-- Hero QR Code Card (Векторный встроенный QR-код) -->
+          <div class="hidden sm:flex flex-col items-center p-3 rounded-2xl bg-slate-900/90 border border-indigo-500/40 shadow-xl shadow-indigo-500/10 shrink-0 text-center">
+            <div class="p-2 bg-white rounded-xl shadow-inner">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAFcCAIAAAALdJF7AAAF8ElEQVR4nO3dMZJjNRRAUZrqBRCyB/a/FPZAyA5MAsFNQFUjXr/vPieesvVt9y0FeqOP1+v1E8A/fv7qBQC7iAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKIAxOetF/rl199uvdTj/PnH7//5b259Prfea/J1Jvkd/jg7BSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgRAEIUQDi2uzDiW3n5E9MzixM2jYfMTlnse27ODE502GnAIQoACEKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCMzj6cmDzjPXkG/on3EUzONWzzrr/DE3YKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCIAhCiAMS62Yd3tW1G4NZ5+8n7GphhpwCEKAAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAmH14mG1zBNvWw4+zUwBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUg1s0+vOtZ+sk7HW65teYnfqdPXPMtdgpAiAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKIAxOjswxPP/086OW9/8hlue50Tt9Zz672+MzsFIEQBCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAOLj9Xp99Rr42+T5/1sm5wi2Pfu7slMAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIK7d+7DtPoJbbp3tP1nzE+81eOKat90xse3vwk4BCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBi992HyfPuJbTMUk2fgt53/P/HE57q15hNmH4D/hSgAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQKybfdh23v6WJ841PPH+iBPf+bdxwk4BCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBidfTjxxDsC3nWmY9uzn3ji72cbOwUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAYt29DyeeeGeBZ9/zXk+cR3DvA/BlRAEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEA4nPyzSbPnG87377t2SfnI7bZNh+x7buwUwBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgrs0+PPH/9n/imreZ/AwnX+fEtt/PLXYKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCIAhCiAMTH6/X66jXE5FzDrXPyk+fSnzjTMfle2+YInjjPYqcAhCgAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQFybfZg8T37LtnPyJ7bNazzxM7xl8ruYnKGwUwBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUg1t378K62nW8/sW1mYfLz2fZ9Ta7HTgEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSA+Lz1QtvOyU/adhfDLU98rm0zC09kpwCEKAAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAXJt9OPHEM+e3zu1ve/Zbz/Wu8xqTts1r2CkAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKOzDycmz9JvOyd/6wz85Fn6W+s5sW3O4l3ZKQAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAiAIQ62Yf+HeTcwTbZkNO3Frzd57XsFMAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIMw+DNl2Bn5yRuBd5xEm7+mY/JztFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgRAGIdbMPT7xr4MTkc02epd821zDp1rNv+83bKQAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAiAIQo7MPTzzffsvkHQG3XueWW+81+fmceNf3slMAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFID5er9dXrwFYxE4BCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgPgLGpKPuxec5uIAAAAASUVORK5CYII=" alt="QR Code @Sanau_AI_bot" class="w-24 h-24 object-contain">
+            </div>
+            <span class="text-[10px] font-bold text-indigo-300 mt-2">@Sanau_AI_bot</span>
+            <span class="text-[9px] text-slate-400">Наведите камеру 📱</span>
+          </div>
+        </div>
+
+        <!-- 3 Главных УТП -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-auto pt-4">
+          <div class="glass-card glass-card-hover p-4 rounded-xl border-l-4 border-l-sky-500">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl sm:text-3xl font-black text-sky-400">⚡ 2 сек</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 font-bold">Скорость</span>
+            </div>
+            <div class="text-sm font-bold text-white mt-1">Оцифровка накладной</div>
+            <p class="text-[11px] text-slate-400 mt-1">Фото чека, накладной или голос на казахском и русском языках</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-4 rounded-xl border-l-4 border-l-emerald-500">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl sm:text-3xl font-black text-emerald-400">🛡️ +12–15%</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold">Выручка</span>
+            </div>
+            <div class="text-sm font-bold text-white mt-1">Защищенная маржа</div>
+            <p class="text-[11px] text-slate-400 mt-1">Радар на лету выявляет скрытое подорожание товаров поставщиками</p>
+          </div>
+
+          <div class="glass-card glass-card-hover p-4 rounded-xl border-l-4 border-l-indigo-500">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl sm:text-3xl font-black text-indigo-400">🔌 1 клик</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 font-bold">Экосистема</span>
+            </div>
+            <div class="text-sm font-bold text-white mt-1">Сквозной учет</div>
+            <p class="text-[11px] text-slate-400 mt-1">Синхронизация в Google Sheets, 1C, Kaspi Pay и базу данных</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-800">
+          <span>Работает 24/7 в Telegram: <strong class="text-indigo-400">@Sanau_AI_bot</strong></span>
+          <span>г. Тараз • 2026</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 2: ПРОБЛЕМА ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-2" data-notes="Главная боль магазина у дома — это не продажи, а неконтролируемая приемка. Поставщик тихо поднял цену молока на 50 тенге. Продавец за кассой не в курсе, хозяин увидит это через месяц. За это время магазин подарил поставщику 200 000 тенге чистой прибыли. При этом нанимать товароведа с 1С за 250 тысяч тенге магазин не может себе позволить.">
+        <div>
+          <span class="text-xs font-bold text-rose-400 tracking-wider uppercase">01 / РЫНОЧНАЯ БОЛЬ</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Почему магазины у дома теряют миллионы каждый месяц?</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            В Казахстане свыше 160 000 точек МСБ (15 000+ в Жамбылской области). 90% не имеют ПК на складе.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-auto">
+          <div class="p-5 rounded-2xl bg-rose-950/20 border border-rose-900/50 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl">🚨</div>
+            <h3 class="text-base font-bold text-rose-300">Скрытый рост оптовых цен</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Поставщик поднимает цену на 8–15% мелким шрифтом на чеке. Хозяин не успевает пересчитать розницу на полке и неделями торгует в минус.
+            </p>
+            <div class="pt-2 text-xs font-bold text-rose-400 border-t border-rose-900/40">
+              Потери: 150 000 – 350 000 ₸/мес
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-amber-950/20 border border-amber-900/50 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">⏳</div>
+            <h3 class="text-base font-bold text-amber-300">Рутинный ад накладных</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              20–40 накладных в неделю вбиваются вручную в тетрадь или Excel. Ошибки в артикулах, потерянные чеки, путаница с остатками.
+            </p>
+            <div class="pt-2 text-xs font-bold text-amber-400 border-t border-amber-900/40">
+              Потери: 15–20 часов рутины в неделю
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-700/60 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-700/50 text-slate-300 flex items-center justify-center text-xl">🛑</div>
+            <h3 class="text-base font-bold text-slate-200">Барьер перехода на 1С / ERP</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Тяжелый софт требует ПК, мышки, дорогой лицензии и обучения. 80% приемщиков склада общаются только на казахском и русском в Telegram.
+            </p>
+            <div class="pt-2 text-xs font-bold text-slate-400 border-t border-slate-700/60">
+              Барьер: 70% МСБ бросают ERP
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Рыночный анализ потерь ритейла</span>
+          <span>Слайд 2 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 3: РЕШЕНИЕ ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-3" data-notes="Sanau.AI убирает любой барьер. Приемщик просто берет свой смартфон, фотографирует чек или надиктовывает голос на родном казахском языке: '20 сүт Родина 440 теңгеден'. Наша нейросеть за 2 секунды распознает каждую позицию без каких-либо строгих команд.">
+        <div>
+          <span class="text-xs font-bold text-indigo-400 tracking-wider uppercase">02 / ПРОДУКТОВОЕ РЕШЕНИЕ</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Sanau.AI: Товаровед в кармане без сложного софта</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Работает прямо в смартфоне через Telegram Bot и Mini App. Никаких ПК или серверов на складе.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-auto">
+          <div class="glass-card glass-card-hover p-5 rounded-2xl space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 flex items-center justify-center font-bold text-xl">
+              📸
+            </div>
+            <h3 class="text-base font-bold text-white">Фото накладной</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Компьютерное зрение GPT-4o-mini извлекает номенклатуру, артикулы, количество и закупочные цены даже с помятых чеков.
+            </p>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-sky-500/10 text-sky-300 font-mono text-[11px] font-semibold">
+              ⚡ 2.5 сек / накладная
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-hover p-5 rounded-2xl space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold text-xl">
+              🎙️
+            </div>
+            <h3 class="text-base font-bold text-white">Голос (Казахский & Русский)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Whisper-1 + NLP: «20 сүт Родина 440 теңгеден келді». Понимает естественную разговорную речь приемщиков без строгих шаблонов.
+            </p>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-300 font-mono text-[11px] font-semibold">
+              ⚡ Руки свободны на складе
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-hover p-5 rounded-2xl space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold text-xl">
+              ✍️
+            </div>
+            <h3 class="text-base font-bold text-white">Умный текстовый ввод</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Копирование сообщений поставщика из WhatsApp в произвольной форме. Мгновенный парсинг товаров и цен.
+            </p>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 font-mono text-[11px] font-semibold">
+              ⚡ 0.5 сек локальный NLP
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Мультимодальная оцифровка 24/7</span>
+          <span>Слайд 3 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 4: РАДАР МАРЖИ ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-4" data-notes="Но главная сила Sanau.AI — это Радар маржи. ИИ не просто сканирует текст, он мгновенно сверяет цену молока с прошлым закупом. Он видит: 'Цена выросла на 12.8%, если не поднять розницу, вы потеряете 1 000 тенге прямо сейчас'. И тут же дает готовую цену для ценника: 570 тенге. Владелец защищен в ту же секунду.">
+        <div>
+          <span class="text-xs font-bold text-rose-400 tracking-wider uppercase">03 / ТЕХНОЛОГИЧЕСКОЕ ЯДРО</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Киллер-фича: «Радар маржи» (Price Spike Radar)</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Sanau.AI — не просто сканер накладных, а финансовый щит рентабельности магазина.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 my-auto">
+          <!-- Левая часть: логика алгоритма -->
+          <div class="sm:col-span-7 glass-card p-5 rounded-2xl space-y-2.5">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2 mb-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+              Алгоритм защиты рентабельности в реальном времени:
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/50">
+                <strong class="text-sky-300">1. Авто-сверка с историей:</strong> Сравнение закупочной цены товара с прошлыми приходами по контрагенту.
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-rose-900/40">
+                <strong class="text-rose-400">2. Детекция скачка:</strong> Мгновенный сигнал при удорожании хотя бы на 1 тенге (например, +12.8%).
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-amber-900/40">
+                <strong class="text-amber-300">3. Расчет кассового риска:</strong> Умножение разницы на объем партии = Точный прогнозируемый убыток.
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-emerald-900/40">
+                <strong class="text-emerald-400">4. Автоматическая розница:</strong> Расчет новой цены с гарантией плановой маржи магазина (25%).
+              </div>
+            </div>
+          </div>
+
+          <!-- Правая часть: реальный кейс Тараза -->
+          <div class="sm:col-span-5 bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 p-5 rounded-2xl border border-indigo-500/40 flex flex-col justify-between shadow-xl shadow-indigo-500/10">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-rose-400 uppercase font-black tracking-wider">🚨 РЕАЛЬНЫЙ КЕЙС</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">Скачок цены</span>
+              </div>
+              <div class="text-base font-black text-white mt-1.5">Молоко «Родина» 3.2% 1л</div>
+              <div class="space-y-1.5 mt-3 text-xs">
+                <div class="flex justify-between text-slate-400">Старый закуп: <span class="text-white font-mono font-semibold">390 ₸</span></div>
+                <div class="flex justify-between text-slate-400">Новый закуп: <span class="text-rose-400 font-bold font-mono">440 ₸ (+12.8%)</span></div>
+                <div class="flex justify-between text-slate-400">Партия: <span class="text-white font-mono font-semibold">20 шт</span></div>
+                <div class="flex justify-between text-slate-400">Прямой убыток: <span class="text-rose-400 font-black font-mono">-1 000 ₸</span></div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 bg-emerald-950/50 p-3 rounded-xl border border-emerald-800/60">
+              <div class="text-[10px] font-bold text-emerald-400">Решение Sanau.AI:</div>
+              <div class="text-base font-black text-white mt-0.5">Новая розница: 570 ₸</div>
+              <div class="text-[10px] text-emerald-300 mt-0.5">Маржа 23-25% полностью защищена!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Защита прибыли ритейла</span>
+          <span>Слайд 4 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 5: ИНТЕГРАЦИИ ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-5" data-notes="Магазину не нужно менять свои привычки. Нажали кнопку 'Занести в сервисы' — и данные одновременно улетели в Google Таблицу бухгалтера, в базу 1С и обновили прайс-лист в Kaspi Pay. Мы даем готовый Apps Script, который настраивается за 2 минуты.">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">04 / ЭКОСИСТЕМА</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Сквозной интеграционный хаб (Integration Hub)</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Мы не заставляем бизнес менять софт. Sanau.AI автоматически наполняет привычные системы данными.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-auto text-xs">
+          <div class="glass-card glass-card-hover p-4 rounded-xl flex items-start space-x-3.5">
+            <span class="text-3xl">📊</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">Google Таблицы (Онлайн-учет)</h3>
+              <p class="text-slate-400 mt-1">
+                Бесплатный Google Apps Script: авто-вставка строк за 1 секунду. Подсветка подорожаний красным цветом. Готово к работе за 2 минуты.
+              </p>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-hover p-4 rounded-xl flex items-start space-x-3.5">
+            <span class="text-3xl">🏢</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">1С:Предприятие & МойСклад</h3>
+              <p class="text-slate-400 mt-1">
+                REST Webhook с отправкой структурированного JSON 'ПриходнаяНакладная' и экспорт в стандарт CommerceML 2.0 (XML).
+              </p>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-hover p-4 rounded-xl flex items-start space-x-3.5">
+            <span class="text-3xl">💳</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">Kaspi Pay / Kaspi Магазин</h3>
+              <p class="text-slate-400 mt-1">
+                Генерация актуального прайс-листа с новыми розничными ценами для моментального обновления витрины Kaspi.
+              </p>
+            </div>
+          </div>
+
+          <div class="glass-card glass-card-hover p-4 rounded-xl flex items-start space-x-3.5">
+            <span class="text-3xl">✈️</span>
+            <div>
+              <h3 class="font-bold text-white text-sm">Telegram Alerts & SQL База</h3>
+              <p class="text-slate-400 mt-1">
+                Срочные алерты директору на телефон при подорожании + полная реляционная история поставщиков в базе данных.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Бесшовная синхронизация</span>
+          <span>Слайд 5 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 6: РЫНОК ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-6" data-notes="Рынок колоссален. Только в Казахстане 160 тысяч магазинов у дома с объемом рынка подписок 28 миллионов долларов в год. Наша стартовая цель в Жамбылской и Южных областях — 1 500 подключенных торговых точек с годовой выручкой свыше 300 тысяч долларов.">
+        <div>
+          <span class="text-xs font-bold text-amber-400 tracking-wider uppercase">05 / ОБЪЕМ РЫНКА</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Рыночный потенциал: TAM / SAM / SOM</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Огромный, исторически обделенный инновациями сегмент регионального МСБ.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-auto">
+          <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">TAM (Казахстан + ЦА)</span>
+              <div class="text-2xl sm:text-3xl font-black text-white mt-1.5">$63 000 000 / год</div>
+              <div class="text-xs text-slate-300 mt-2 leading-relaxed">
+                350 000+ торговых точек розницы и HoReCa (Казахстан, Узбекистан, Кыргызстан).
+              </div>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-800 text-[11px] text-slate-500">
+              Потенциал региона
+            </div>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl border-indigo-500/40 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">SAM (Казахстан МСБ)</span>
+              <div class="text-2xl sm:text-3xl font-black text-white mt-1.5">$28 800 000 / год</div>
+              <div class="text-xs text-slate-300 mt-2 leading-relaxed">
+                160 000 магазинов «у дома», аптек, минимаркетов с ручным учетом накладных.
+              </div>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-slate-800 text-[11px] text-indigo-300">
+              Целевой сегмент продукта
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/50 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">SOM (1-2 год экспансии)</span>
+              <div class="text-2xl sm:text-3xl font-black text-emerald-400 mt-1.5">$320 000 / год (ARR)</div>
+              <div class="text-xs text-slate-200 mt-2 leading-relaxed">
+                1 500 платящих точек в Жамбылской и Южных областях (10% охват Тараза и Шымкента).
+              </div>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-emerald-800/60 text-[11px] text-emerald-300 font-bold">
+              1 500 подписок на старте
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Рыночный охват</span>
+          <span>Слайд 6 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 7: ФИНАНСОВАЯ МОДЕЛЬ ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-7" data-notes="Наша бизнес-модель — классический B2B SaaS от 7 990 до 14 990 тенге в месяц. Для магазина подписка окупается за первые 3 дня: достаточно один раз вовремя пересчитать цену на подорожавшее масло или сахар, чтобы сберечь больше стоимости подписки. Соотношение LTV к CAC — 35 к 1.">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">06 / МОНЕТИЗАЦИЯ И ЭКОНОМИКА</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Бизнес-модель: B2B SaaS с моментальной окупаемостью</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Подписка окупается магазином за первые 2-3 дня за счет сбереженной от инфляции маржи.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-auto">
+          <!-- Тариф 1 -->
+          <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-bold text-slate-400">Базовый (Starter)</div>
+              <div class="text-xl sm:text-2xl font-black text-white mt-1">7 990 ₸ <span class="text-xs text-slate-400 font-normal">/ мес</span></div>
+              <ul class="text-xs text-slate-300 space-y-1.5 mt-3">
+                <li>✓ До 50 накладных в месяц</li>
+                <li>✓ Фото и текстовая приемка</li>
+                <li>✓ Радар скачков цен закупа</li>
+                <li>✓ Экспорт в Google Таблицы</li>
+              </ul>
+            </div>
+            <div class="text-[10px] text-slate-500 pt-3 border-t border-slate-800 mt-3">Для небольших магазинов</div>
+          </div>
+
+          <!-- Тариф 2 -->
+          <div class="bg-gradient-to-b from-indigo-900/40 via-slate-900 to-slate-900 p-5 rounded-2xl border-2 border-indigo-500 flex flex-col justify-between shadow-xl shadow-indigo-500/10 relative">
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-indigo-600 text-[10px] font-bold text-white">ХИТ</span>
+            <div>
+              <div class="text-xs font-bold text-indigo-400">Бизнес (Pro)</div>
+              <div class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">14 990 ₸ <span class="text-xs text-slate-400 font-normal">/ мес</span></div>
+              <ul class="text-xs text-slate-200 space-y-1.5 mt-3">
+                <li>✓ <strong>Безлимитные накладные</strong></li>
+                <li>✓ <strong>Голос на казахском & русском</strong></li>
+                <li>✓ Шлюз 1C / ERP Webhook + XML</li>
+                <li>✓ Выгрузка фида в Kaspi Pay</li>
+                <li>✓ Telegram алерты директору</li>
+              </ul>
+            </div>
+            <div class="text-[10px] text-emerald-400 font-bold pt-3 border-t border-slate-800 mt-3">Окупаемость: 2-3 дня</div>
+          </div>
+
+          <!-- Тариф 3 -->
+          <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-bold text-slate-400">Сеть (Enterprise)</div>
+              <div class="text-xl sm:text-2xl font-black text-white mt-1">39 990 ₸ <span class="text-xs text-slate-400 font-normal">/ мес</span></div>
+              <ul class="text-xs text-slate-300 space-y-1.5 mt-3">
+                <li>✓ До 5 торговых точек / складов</li>
+                <li>✓ Сводная аналитика сети</li>
+                <li>✓ Приоритетная обработка AI</li>
+                <li>✓ Выделенный саппорт в Telegram</li>
+              </ul>
+            </div>
+            <div class="text-[10px] text-slate-500 pt-3 border-t border-slate-800 mt-3">Для сетей минимаркетов</div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Юнит-экономика: LTV 210 000 ₸ • CAC 6 000 ₸ • LTV/CAC = 35x</span>
+          <span>Слайд 7 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 8: СРАВНЕНИЕ ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-8" data-notes="В отличие от тяжелой 1С, у нас нулевой порог входа — все работает в Telegram. В отличие от обычных сканеров чеков, мы понимаем казахскую речь на складе и прямо защищаем маржу пересчетом цен.">
+        <div>
+          <span class="text-xs font-bold text-sky-400 tracking-wider uppercase">07 / КОНКУРЕНТНЫЕ ПРЕИМУЩЕСТВА</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Почему Sanau.AI побеждает традиционные решения?</h2>
+        </div>
+
+        <div class="overflow-x-auto my-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-700 text-slate-400">
+                <th class="py-2.5 px-3">Критерий</th>
+                <th class="py-2.5 px-3">Тетрадь / Excel</th>
+                <th class="py-2.5 px-3">1С:Предприятие</th>
+                <th class="py-2.5 px-3">Обычные OCR сканеры</th>
+                <th class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold rounded-t-xl">Sanau.AI ⚡</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-white">Входной барьер</td>
+                <td class="py-2.5 px-3">Низкий</td>
+                <td class="py-2.5 px-3 text-rose-400">Очень высокий (ПК, софт)</td>
+                <td class="py-2.5 px-3">Средний</td>
+                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">0 (в Telegram на телефоне)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-white">Голос на казахском/русском</td>
+                <td class="py-2.5 px-3 text-rose-400">❌ Нет</td>
+                <td class="py-2.5 px-3 text-rose-400">❌ Нет</td>
+                <td class="py-2.5 px-3 text-rose-400">❌ Нет</td>
+                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">✅ Whisper + NLP (KZ/RU)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-white">Радар защиты маржи</td>
+                <td class="py-2.5 px-3 text-rose-400">❌ Потери маржи</td>
+                <td class="py-2.5 px-3 text-amber-400">⚠️ Сложные отчеты</td>
+                <td class="py-2.5 px-3 text-rose-400">❌ Только текст</td>
+                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">✅ Автоматически 100%</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-white">Скорость приемки</td>
+                <td class="py-2.5 px-3">15–30 минут</td>
+                <td class="py-2.5 px-3">10–20 минут</td>
+                <td class="py-2.5 px-3">2–4 минуты</td>
+                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">⚡ 2–3 секунды</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold text-white">Цена внедрения</td>
+                <td class="py-2.5 px-3">0 ₸ (но убытки)</td>
+                <td class="py-2.5 px-3 text-rose-400">От 250 000 ₸ + 1С-ник</td>
+                <td class="py-2.5 px-3">От $25 / мес</td>
+                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold rounded-b-xl">От 7 990 ₸ / мес</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Конкурентный анализ</span>
+          <span>Слайд 8 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 9: ДОРОЖНАЯ КАРТА ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-9" data-notes="Наш план развития: начав с Тараза, в первом квартале 2027 мы подключаем Kaspi Pay и печать ценников по Bluetooth, а к концу года выходим на 1 500 точек по всему югу Казахстана с ARR свыше 250 тысяч долларов.">
+        <div>
+          <span class="text-xs font-bold text-indigo-400 tracking-wider uppercase">08 / СТРАТЕГИЯ РОСТА</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Дорожная карта: От Тараза до национального масштаба</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 my-auto">
+          <div class="glass-card p-4 rounded-xl border-t-4 border-t-sky-400 space-y-2">
+            <span class="text-[10px] font-bold text-sky-400 uppercase tracking-wider">Q4 2026</span>
+            <h3 class="text-xs font-bold text-white">Запуск в Таразе</h3>
+            <ul class="text-[11px] text-slate-300 space-y-1">
+              <li>• Пилот с 50 магазинами</li>
+              <li>• База поставщиков региона</li>
+              <li>• Telegram Mini App 24/7</li>
+              <li>• Google Sheets интеграция</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-t-4 border-t-indigo-500 space-y-2">
+            <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Q1 2027</span>
+            <h3 class="text-xs font-bold text-white">Kaspi & Фискал</h3>
+            <ul class="text-[11px] text-slate-300 space-y-1">
+              <li>• Прямой плагин Kaspi Pay</li>
+              <li>• Webkassa & re:Kassa шлюз</li>
+              <li>• Печать ценников Bluetooth</li>
+              <li>• 300+ торговых точек</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-t-4 border-t-emerald-400 space-y-2">
+            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Q2 2027</span>
+            <h3 class="text-xs font-bold text-white">Юг Казахстана</h3>
+            <ul class="text-[11px] text-slate-300 space-y-1">
+              <li>• Шымкент, Туркестан, Алматы</li>
+              <li>• 1 500 активных подписок</li>
+              <li>• Партнерство с оптовиками</li>
+              <li>• ARR: $250 000+</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-t-4 border-t-amber-400 space-y-2">
+            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Q3-Q4 2027</span>
+            <h3 class="text-xs font-bold text-white">AI-Автозаказ</h3>
+            <ul class="text-[11px] text-slate-300 space-y-1">
+              <li>• Прогноз дефицита на полке</li>
+              <li>• Автозаказ поставщику</li>
+              <li>• Финтех-скоринг ритейла</li>
+              <li>• Экспансия в Узбекистан</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Дорожная карта 2026-2027</span>
+          <span>Слайд 9 из 10</span>
+        </div>
+      </div>
+
+      <!-- ================= SLIDE 10: ЗАКЛЮЧЕНИЕ & GRAND QR ================= -->
+      <div class="slide hidden flex-1 flex flex-col justify-between" id="slide-10" data-notes="Проект Sanau.AI готов к внедрению прямо сейчас. Бот активен 24/7 в облаке, отсканируйте большой QR-код на экране телефоном, отправьте ему голосовое или фото — и проверьте работу вживую. Спасибо за внимание, готовы ответить на ваши вопросы!">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">09 / LIVE DEMO & КОНТАКТЫ</span>
+          <h2 class="text-2xl sm:text-4xl font-black text-white mt-1 mb-1">Sanau.AI готов к внедрению уже сегодня</h2>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Готовый рабочий продукт, развернутый в облаке и доступный любому магазину за 30 секунд.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 my-auto">
+          <!-- Левая часть: статус готовности -->
+          <div class="sm:col-span-6 glass-card p-5 rounded-2xl space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Текущий статус продукта:
+            </h3>
+            <ul class="text-xs text-slate-200 space-y-2.5">
+              <li class="flex items-center gap-2 text-emerald-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                <span>Облачный сервер 24/7 развернут на Railway</span>
+              </li>
+              <li class="flex items-center gap-2 text-emerald-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                <span>Telegram-бот и нативный Mini App в продакшене</span>
+              </li>
+              <li class="flex items-center gap-2 text-emerald-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                <span>Голосовое и визуальное распознавание чеков</span>
+              </li>
+              <li class="flex items-center gap-2 text-emerald-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                <span>Радар маржи и синхронизация Google Sheets онлайн</span>
+              </li>
+              <li class="flex items-center gap-2 text-emerald-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
+                <span>Протестировано на ценах местных поставщиков Тараза</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Правая часть: БОЛЬШОЙ QR-КОД КАРТОЧКА -->
+          <div class="sm:col-span-6 bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-900 p-5 rounded-2xl border-2 border-indigo-500/60 flex items-center gap-5 shadow-2xl shadow-indigo-500/20">
+            <div class="p-3 bg-white rounded-2xl shadow-2xl shrink-0">
+              <img src="data:image/png;base64,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" alt="Scan QR Code @Sanau_AI_bot" class="w-32 h-32 sm:w-36 sm:h-36 object-contain">
+            </div>
+
+            <div class="space-y-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                Live Демо
+              </span>
+              <h3 class="text-lg sm:text-xl font-black text-white leading-tight">Отсканируйте камерой смартфона</h3>
+              <a href="https://t.me/Sanau_AI_bot" target="_blank" class="block text-indigo-400 hover:text-indigo-300 font-extrabold text-sm font-mono">
+                @Sanau_AI_bot ↗
+              </a>
+              <p class="text-[11px] text-slate-400 leading-snug">
+                Мгновенный запуск бота: отправьте голосовое или фото накладной!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 pt-3 border-t border-slate-800 flex justify-between">
+          <span>Sanau.AI • Спасибо за внимание! Готовы к вопросам.</span>
+          <span>г. Тараз, Казахстан</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= SPEAKER NOTES DRAWER (TOGGLEABLE) ================= -->
+  <aside id="speaker-notes-drawer" class="no-print hidden fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-4xl bg-slate-900/95 border border-amber-500/40 backdrop-blur-xl p-4 rounded-2xl shadow-2xl z-40 text-xs text-slate-200 animate-in slide-in-from-bottom duration-200">
+    <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
+      <div class="flex items-center gap-2">
+        <i data-lucide="mic" class="w-4 h-4 text-amber-400"></i>
+        <strong class="text-amber-400">Подсказка для спикера (Слайд <span id="notes-slide-num">1</span>):</strong>
+      </div>
+      <button onclick="toggleSpeakerNotes()" class="text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <p id="speaker-notes-text" class="leading-relaxed text-slate-300 italic font-sans"></p>
+  </aside>
+
+  <!-- ================= BOTTOM NAVIGATION & THUMBNAILS (NO-PRINT) ================= -->
+  <footer class="no-print bg-[#0c1222]/90 border-t border-slate-800 px-4 py-2.5 flex items-center justify-between text-xs text-slate-400">
+    <div class="flex items-center space-x-1.5" id="slide-dots">
+      <!-- Заполняется JS -->
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <span class="hidden sm:inline text-[11px] text-slate-500">Навигация: <strong>←</strong> / <strong>→</strong> / <strong>Пробел</strong> • Речь спикера: <strong>N</strong></span>
+      <button onclick="toggleFullScreen()" class="hover:text-white transition flex items-center gap-1 text-[11px] text-slate-300">
+        <i data-lucide="maximize" class="w-3.5 h-3.5"></i>
+        <span>На весь экран</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ================= INTERACTIVE SCRIPT ================= -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+    let notesVisible = false;
+
+    function renderDots() {
+      const container = document.getElementById("slide-dots");
+      container.innerHTML = "";
+      for (let i = 1; i <= totalSlides; i++) {
+        const btn = document.createElement("button");
+        const isActive = (i === currentSlide);
+        btn.className = `h-2 rounded-full transition-all duration-300 ${isActive ? 'bg-indigo-500 w-8' : 'bg-slate-700 hover:bg-slate-500 w-2'}`;
+        btn.onclick = () => showSlide(i);
+        btn.title = `Слайд ${i}`;
+        container.appendChild(btn);
+      }
+    }
+
+    function showSlide(num) {
+      if (num < 1) num = 1;
+      if (num > totalSlides) num = totalSlides;
+      currentSlide = num;
+
+      for (let i = 1; i <= totalSlides; i++) {
+        const el = document.getElementById(`slide-${i}`);
+        if (el) {
+          if (i === currentSlide) {
+            el.classList.remove("hidden");
+            el.classList.add("slide-enter");
+            const notes = el.getAttribute("data-notes") || "Нет заметок к слайду.";
+            document.getElementById("speaker-notes-text").innerText = notes;
+            document.getElementById("notes-slide-num").innerText = currentSlide;
+          } else {
+            el.classList.add("hidden");
+            el.classList.remove("slide-enter");
+          }
+        }
+      }
+
+      document.getElementById("current-slide-badge").innerText = currentSlide;
+      document.getElementById("progress-bar").style.width = `${(currentSlide / totalSlides) * 100}%`;
+      renderDots();
+      lucide.createIcons();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function toggleSpeakerNotes() {
+      const drawer = document.getElementById("speaker-notes-drawer");
+      notesVisible = !notesVisible;
+      if (notesVisible) {
+        drawer.classList.remove("hidden");
+      } else {
+        drawer.classList.add("hidden");
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Горячие клавиши
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === "n" || e.key === "N" || e.key === "т" || e.key === "Т") {
+        toggleSpeakerNotes();
+      } else if (e.key === "f" || e.key === "F" || e.key === "а" || e.key === "А") {
+        toggleFullScreen();
+      } else if (e.key === "p" || e.key === "P" || e.key === "з" || e.key === "З") {
+        window.print();
+      }
+    });
+
+    // Поддержка печати всех слайдов
+    window.addEventListener("beforeprint", () => {
+      for (let i = 1; i <= totalSlides; i++) {
+        const el = document.getElementById(`slide-${i}`);
+        if (el) el.classList.remove("hidden");
+      }
+    });
+
+    window.addEventListener("afterprint", () => {
+      showSlide(currentSlide);
+    });
+
+    // Инициализация
+    showSlide(1);
+    lucide.createIcons();
+  </script>
+</body>
+</html>

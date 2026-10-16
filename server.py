@@ -85,6 +85,7 @@ async def serve_presentation():
     return HTMLResponse("<h1>Презентация Sanau.AI загружается...</h1>")
 
 @app.get("/presentation.pdf")
+@app.get("/presentation_pitch_deck.pdf")
 @app.get("/api/export/presentation")
 async def serve_presentation_pdf():
     pdf_file = Path(__file__).resolve().parent / "presentation_pitch_deck.pdf"
