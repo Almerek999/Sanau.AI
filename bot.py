@@ -216,6 +216,31 @@ class TelegramBotWorker:
                 self._send_message(token, chat_id, f"📱 *Текущий адрес Mini App:*\n`{curr}`\n\nЧтобы привязать домен (например от Railway), отправьте команду:\n`/webapp https://ваш-домен.up.railway.app`")
             return
 
+        # Команда /clear для полной очистки всех товаров и истории
+        if msg_text.startswith("/clear"):
+            from database.db import get_connection, set_setting
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM invoice_items")
+            cursor.execute("DELETE FROM invoices")
+            cursor.execute("DELETE FROM sync_logs")
+            cursor.execute("DELETE FROM products")
+            conn.commit()
+            conn.close()
+            set_setting("catalog_cleared", "true")
+            cached_invoices.clear()
+            self._send_message(token, chat_id, "🗑️ *Каталог товаров и журнал накладных полностью очищены!*\n\nВсе старые позиции удалены. База пуста (0 товаров). Теперь заносите товары вашего магазина с чистого листа через голос, фото или текст!")
+            return
+
+        # Команда /reset для сброса каталога к 12 эталонным товарам Тараза
+        if msg_text.startswith("/reset"):
+            from database.seed_data import seed
+            from database.db import set_setting
+            set_setting("catalog_cleared", "false")
+            seed()
+            self._send_message(token, chat_id, "🔄 *Каталог успешно сброшен к базовым 12 товарам Тараза.*")
+            return
+
         # Команда /start
         if msg_text.startswith("/start"):
             store_name = get_setting("store_name", "Магазин «Береке»")
@@ -227,9 +252,13 @@ class TelegramBotWorker:
                 "📦 *Что умеет бот в реальном времени:*\n"
                 "• 🎙️ *Голосовая приемка:* отправьте голосовое сообщение на казахском или русском (например: _«20 сүт Родина 440 теңгеден келді...»_).\n"
                 "• 📸 *Фото накладной:* сфотографируйте бумажную накладную или чек прямо с камеры.\n"
+                "• ✍️ *Текстовый ввод:* напишите товары в произвольной форме (например: _«Кола 10 шт по 450 тг»_).\n"
                 "• 🚨 *Радар маржи:* ИИ мгновенно выявит скрытое подорожание товара и рассчитает новую розничную цену для защиты маржи магазина.\n"
                 "• 🔌 *Сквозная синхронизация:* одним кликом вносит товары в Google Таблицы и 1С.\n\n"
-                "💡 *Совет:* Вы можете изменить название магазина прямо здесь командой `/store [Название]` или в Mini App!"
+                "💡 *Команды бота:*\n"
+                "• `/store [Название]` — изменить имя магазина\n"
+                "• `/clear` — полностью очистить каталог и старые накладные\n"
+                "• `/reset` — восстановить базовый каталог Тараза (12 товаров)"
             )
             kb = {
                 "inline_keyboard": [
@@ -253,8 +282,12 @@ class TelegramBotWorker:
             # Скачиваем фото с серверов Telegram
             try:
                 f_resp = requests.get(f"https://api.telegram.org/bot{token}/getFile?file_id={file_id}", timeout=10)
-                file_path = f_resp.json()["result"]["file_path"]
-                img_bytes = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=15).content
+                f_json = f_resp.json()
+                if not f_json.get("ok") or not f_json.get("result"):
+                    self._send_message(token, chat_id, f"❌ Ошибка Telegram: {f_json.get('description', 'Не удалось загрузить фото')}")
+                    return
+                file_path = f_json["result"]["file_path"]
+                img_bytes = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=20).content
                 
                 # Обработка через AI
                 inv = process_invoice(image_bytes=img_bytes)
@@ -263,16 +296,23 @@ class TelegramBotWorker:
                 self._send_message(token, chat_id, f"❌ Ошибка обработки фото: {str(e)}")
             return
 
-        # Обработка голосового сообщения (.ogg)
+        # Обработка голосового сообщения (.ogg / .oga)
         if "voice" in message or "audio" in message:
             self._send_message(token, chat_id, "🎙️ *AI слушает голосовую приемку (казахский/русский язык)...*")
             voice_obj = message.get("voice") or message.get("audio")
-            file_id = voice_obj["file_id"]
+            file_id = voice_obj.get("file_id") if voice_obj else None
+            if not file_id:
+                self._send_message(token, chat_id, "❌ Не удалось получить аудиофайл.")
+                return
             
             try:
                 f_resp = requests.get(f"https://api.telegram.org/bot{token}/getFile?file_id={file_id}", timeout=10)
-                file_path = f_resp.json()["result"]["file_path"]
-                audio_bytes = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=15).content
+                f_json = f_resp.json()
+                if not f_json.get("ok") or not f_json.get("result"):
+                    self._send_message(token, chat_id, f"❌ Ошибка Telegram при получении файла: {f_json.get('description', 'Файл недоступен')}")
+                    return
+                file_path = f_json["result"]["file_path"]
+                audio_bytes = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=25).content
                 
                 inv = process_invoice(audio_bytes=audio_bytes, audio_mime="audio/ogg")
                 self._send_invoice_report(token, chat_id, inv)

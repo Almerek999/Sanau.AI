@@ -63,6 +63,30 @@ def test_export_endpoints():
         assert resp.status_code == 200
         assert len(resp.content) > 50
 
+def test_catalog_deletion_and_clear():
+    # 1. Сброс к эталону
+    client.post("/api/reset_demo")
+    prod_resp = client.get("/api/products")
+    prods = prod_resp.json()
+    assert len(prods) == 12
+    
+    # 2. Удаление 1 товара
+    first_id = prods[0]["id"]
+    del_resp = client.delete(f"/api/products/{first_id}")
+    assert del_resp.status_code == 200
+    assert len(client.get("/api/products").json()) == 11
+    
+    # 3. Полная очистка каталога
+    clear_resp = client.post("/api/clear_data")
+    assert clear_resp.status_code == 200
+    assert len(client.get("/api/products").json()) == 0
+    assert get_setting("catalog_cleared") == "true"
+    
+    # 4. Восстановление
+    reset_resp = client.post("/api/reset_demo")
+    assert reset_resp.status_code == 200
+    assert len(client.get("/api/products").json()) == 12
+
 if __name__ == "__main__":
     test_root_serves_miniapp()
     test_settings_flow()
@@ -70,4 +94,5 @@ if __name__ == "__main__":
     test_sync_to_services()
     test_catalog_and_radar_endpoints()
     test_export_endpoints()
+    test_catalog_deletion_and_clear()
     print("ALL API AND MINI APP TESTS PASSED SUCCESSFULLY! 🚀")

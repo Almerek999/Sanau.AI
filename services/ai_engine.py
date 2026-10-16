@@ -151,27 +151,36 @@ def parse_voice_audio_bytes_with_openai(audio_bytes: bytes, mime_type: str = "au
         # 1. Whisper transcription
         url_whisper = "https://api.openai.com/v1/audio/transcriptions"
         headers = {"Authorization": f"Bearer {key}"}
-        ext = "ogg" if "ogg" in mime_type else "wav"
+        # Telegram voice files typically have .oga or .ogg extension
+        ext = "oga" if ("ogg" in mime_type or "oga" in mime_type) else "wav"
         files = {
             "file": (f"audio.{ext}", io.BytesIO(audio_bytes), mime_type),
             "model": (None, "whisper-1")
         }
         resp = requests.post(url_whisper, headers=headers, files=files, timeout=25)
+        if resp.status_code == 401:
+            print("OpenAI Whisper Error: 401 Unauthorized (Invalid API Key)")
+            return {"error": "API-ключ OpenAI недействителен (401 Unauthorized). Обновите ключ в настройках Mini App или отправьте накладную текстом."}
         if resp.status_code != 200:
             print(f"OpenAI Whisper Error {resp.status_code}: {resp.text}")
-            return None
+            return {"error": f"Сбой сервиса расшифровки речи OpenAI Whisper (HTTP {resp.status_code})."}
+            
         transcription = resp.json().get("text", "")
         if not transcription:
-            return None
+            return {"error": "Речь в аудиосообщении не обнаружена. Пожалуйста, повторите четче."}
             
-        # 2. GPT-4o-mini parsing
+        # 2. GPT-4o-mini parsing с fallback на локальный NLP парсер
         data = parse_voice_text_with_openai(transcription, api_key=key)
+        if not data or not data.get("items"):
+            data = parse_text_locally(transcription)
+            
         if data:
             data["transcription"] = transcription
-        return data
+            return data
+        return {"error": f"Распознан текст: «{transcription}», но позиции товаров не определены. Укажите название и цену.", "transcription": transcription}
     except Exception as e:
         print(f"OpenAI Audio error: {e}")
-        return None
+        return {"error": f"Ошибка обработки аудио: {e}"}
 
 def parse_voice_text_with_openai(text_input: str, api_key: str = "") -> Optional[Dict[str, Any]]:
     """Парсинг текста приемки через OpenAI GPT-4o-mini"""
@@ -566,11 +575,22 @@ def process_invoice(
         # 2. Попытка через Gemini Audio
         if not raw_data and gemini_key:
             raw_data = parse_voice_audio_bytes_with_gemini(audio_bytes, audio_mime, gemini_key)
-        # При сбое НЕ подменяем на фейк
-        if not raw_data or not raw_data.get("items"):
+            
+        if isinstance(raw_data, dict) and raw_data.get("error"):
             return {
                 "status": "error",
-                "error": "Не удалось распознать аудиосообщение. Пожалуйста, повторите голосовое сообщение четче или отправьте текстом.",
+                "error": raw_data["error"],
+                "items": [],
+                "source_type": "audio_error",
+                "transcription": raw_data.get("transcription", "")
+            }
+            
+        # При сбое НЕ подменяем на фейк
+        if not raw_data or not raw_data.get("items"):
+            key_hint = "" if (openai_key or gemini_key) else " (Внимание: OpenAI / Gemini API ключ не настроен в сервисах)"
+            return {
+                "status": "error",
+                "error": f"Не удалось распознать позиции в аудиосообщении{key_hint}. Пожалуйста, повторите четче или отправьте текстом (например: «Молоко 20 шт по 440 тг»).",
                 "items": [],
                 "source_type": "audio_error"
             }

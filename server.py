@@ -29,7 +29,8 @@ init_db()
 conn = get_connection()
 cursor = conn.cursor()
 cursor.execute("SELECT COUNT(*) FROM products")
-if cursor.fetchone()[0] == 0:
+prod_count = cursor.fetchone()[0]
+if prod_count == 0 and get_setting("catalog_cleared") != "true":
     seed()
 conn.close()
 
@@ -246,14 +247,16 @@ class DemoPayload(BaseModel):
 
 @app.post("/api/reset_demo")
 async def reset_demo_database():
+    set_setting("catalog_cleared", "false")
     seed()
-    return {"status": "success", "message": "База данных сброшена к эталонным ценам Тараза"}
+    return {"status": "success", "message": "База данных сброшена к эталонным ценам Тараза (12 товаров)"}
 
 @app.post("/api/process/demo")
 async def process_demo(payload: DemoPayload):
     analyzed = process_invoice(sample_id=payload.sample_id)
-    from services.connectors.sql_connector import SqlDatabaseConnector
-    SqlDatabaseConnector().sync_invoice(analyzed)
+    if analyzed.get("items") and not analyzed.get("error"):
+        from services.connectors.sql_connector import SqlDatabaseConnector
+        SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 @app.post("/api/clear_data")
@@ -263,9 +266,20 @@ async def clear_store_data():
     cursor.execute("DELETE FROM invoice_items")
     cursor.execute("DELETE FROM invoices")
     cursor.execute("DELETE FROM sync_logs")
+    cursor.execute("DELETE FROM products")
     conn.commit()
     conn.close()
-    return {"status": "success", "message": "Журнал накладных и аналитика радара очищены. Начните приемку для вашего магазина."}
+    set_setting("catalog_cleared", "true")
+    return {"status": "success", "message": "Каталог товаров и журнал накладных полностью очищены. База пуста."}
+
+@app.delete("/api/products/{product_id}")
+async def delete_product(product_id: int):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": f"Товар #{product_id} удален из каталога"}
 
 # ----------------- СИНХРОНИЗАЦИЯ ВО ВСЕ СЕРВИСЫ -----------------
 @app.post("/api/sync")

@@ -268,6 +268,18 @@
           <input type="text" id="catalog-search" oninput="filterCatalog()" placeholder="Поиск (Родина, Цесна, Шедевр)..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">
         </div>
 
+        <!-- Кнопки управления каталогом -->
+        <div class="flex items-center justify-between gap-2 pt-1 pb-1">
+          <button onclick="clearCatalogData()" class="px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-semibold flex items-center gap-1 transition active:scale-95">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            Очистить каталог (0 товаров)
+          </button>
+          <button onclick="resetCatalogToTaraz()" class="px-2.5 py-1.5 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 text-[11px] font-semibold flex items-center gap-1 transition active:scale-95">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            Эталон Тараза
+          </button>
+        </div>
+
         <div class="divide-y divide-slate-100" id="catalog-list">
           <!-- Заполняется JS -->
         </div>
@@ -1047,21 +1059,77 @@
     function renderCatalog(items) {
       const container = document.getElementById("catalog-list");
       container.innerHTML = "";
+      if (!items || items.length === 0) {
+        container.innerHTML = `
+          <div class="py-8 text-center text-slate-400 text-xs">
+            <i data-lucide="package-open" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+            Каталог пуст (0 товаров). Добавьте товары через приемку (фото, голос или текст).
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
       items.forEach(p => {
         const div = document.createElement("div");
         div.className = "py-2.5 flex items-center justify-between text-xs";
+        const safeName = (p.name || "").replace(/'/g, "\\'");
         div.innerHTML = `
-          <div>
+          <div class="pr-2">
             <div class="font-bold text-slate-800">${p.name}</div>
             <div class="text-[10px] text-slate-400">${p.category} • ${p.unit}</div>
           </div>
-          <div class="text-right">
-            <div class="text-slate-500">Закуп: <strong>${p.current_purchase_price} ₸</strong></div>
-            <div class="text-emerald-600 font-bold">Розница: ${p.recommended_retail_price} ₸</div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <div class="text-right">
+              <div class="text-slate-500">Закуп: <strong>${p.current_purchase_price} ₸</strong></div>
+              <div class="text-emerald-600 font-bold">Розница: ${p.recommended_retail_price} ₸</div>
+            </div>
+            <button onclick="deleteProduct(${p.id}, '${safeName}')" class="p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition active:scale-90" title="Удалить товар">
+              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
         `;
         container.appendChild(div);
       });
+      lucide.createIcons();
+    }
+
+    async function deleteProduct(id, name) {
+      if (!confirm(`Удалить товар «${name}» из каталога?`)) return;
+      try {
+        await fetch(`/api/products/${id}`, { method: "DELETE" });
+        loadCatalog();
+        loadRadarStats();
+      } catch (e) {
+        alert("Ошибка удаления: " + e);
+      }
+    }
+
+    async function clearCatalogData() {
+      if (!confirm("Вы действительно хотите полностью очистить весь каталог товаров (0 позиций) и начать с чистого листа?")) return;
+      try {
+        const res = await fetch("/api/clear_data", { method: "POST" });
+        const ans = await res.json();
+        alert("✅ " + ans.message);
+        loadCatalog();
+        loadRadarStats();
+        loadSyncLogs();
+      } catch (e) {
+        alert("Ошибка очистки: " + e);
+      }
+    }
+
+    async function resetCatalogToTaraz() {
+      if (!confirm("Восстановить каталог к 12 эталонным товарам Тараза?")) return;
+      try {
+        const res = await fetch("/api/reset_demo", { method: "POST" });
+        const ans = await res.json();
+        alert("✅ " + ans.message);
+        loadCatalog();
+        loadRadarStats();
+        loadSyncLogs();
+      } catch (e) {
+        alert("Ошибка: " + e);
+      }
     }
 
     function filterCatalog() {
