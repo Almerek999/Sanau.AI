@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Qabyldau AI — Товаровед & Радар маржи</title>
+  
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* iOS smooth scrolling & tap highlight */
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--tg-theme-bg-color, #F8FAFC);
+      color: var(--tg-theme-text-color, #0F172A);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    .pulse-record {
+      animation: pulse-red 1.5s infinite;
+    }
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 14px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20">
+
+  <!-- ======================= HEADER ======================= -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-sky-500/20">
+        <i data-lucide="package" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="font-bold text-slate-900 text-base leading-tight">Qabyldau AI</h1>
+          <span class="bg-amber-100 text-amber-800 text-[10px] font-semibold px-1.5 py-0.5 rounded-full border border-amber-200">Тараз МСБ</span>
+        </div>
+        <p class="text-xs text-slate-500">Магазин «Береке» • Жамбыл облысы</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition active:scale-95 flex items-center space-x-1" title="Связать сервисы">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span class="text-xs font-semibold hidden sm:inline">Сервисы</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================= QUICK STATS HERO ======================= -->
+  <div class="px-4 pt-3 pb-1">
+    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-4 shadow-lg flex items-center justify-between relative overflow-hidden">
+      <div class="relative z-10">
+        <span class="text-xs text-indigo-200 font-medium tracking-wide uppercase">Спасенная маржа (ROI)</span>
+        <div class="text-2xl font-black mt-0.5 text-emerald-400" id="hero-saved-margin">+38 400 ₸</div>
+        <p class="text-[11px] text-slate-300 mt-1 flex items-center gap-1">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+          Радар выявил 4 скрытых роста цен за неделю
+        </p>
+      </div>
+      <div class="text-right relative z-10">
+        <button onclick="openTab('radar')" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 active:scale-95 text-xs rounded-xl backdrop-blur transition border border-white/20 font-medium">
+          Аналитика ➔
+        </button>
+      </div>
+      <!-- Background glow -->
+      <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-sky-500/20 rounded-full blur-2xl"></div>
+    </div>
+  </div>
+
+  <!-- ======================= MAIN CONTENT TABS ======================= -->
+  <main class="flex-1 px-4 py-3">
+
+    <!-- ----------------- TAB 1: ПРИЕМКА ТОВАРА ----------------- -->
+    <section id="tab-intake" class="space-y-4">
+      
+      <!-- Способы ввода -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="scan" class="w-4 h-4 text-sky-600"></i>
+            Способ приемки накладной
+          </h2>
+          <span class="text-[11px] text-slate-400">AI Vision & Voice</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <!-- Фото/Камера -->
+          <label class="cursor-pointer flex flex-col items-center justify-center p-3 rounded-xl border-2 border-dashed border-sky-300 hover:border-sky-500 bg-sky-50/50 hover:bg-sky-50 transition active:scale-95 text-center">
+            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoUpload(event)">
+            <i data-lucide="camera" class="w-6 h-6 text-sky-600 mb-1"></i>
+            <span class="text-xs font-semibold text-slate-700">Фото / Чек</span>
+            <span class="text-[10px] text-slate-400">С камеры или галереи</span>
+          </label>
+
+          <!-- Микрофон -->
+          <button onclick="toggleVoiceRecording()" id="mic-btn" class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-indigo-400 bg-slate-50 hover:bg-indigo-50/50 transition active:scale-95 text-center">
+            <div id="mic-icon-container" class="w-6 h-6 flex items-center justify-center mb-1 text-indigo-600">
+              <i data-lucide="mic" class="w-6 h-6"></i>
+            </div>
+            <span id="mic-text" class="text-xs font-semibold text-slate-700">Голос</span>
+            <span id="mic-subtext" class="text-[10px] text-slate-400">Қаз / Рус приемка</span>
+          </button>
+
+          <!-- Демо со сцены -->
+          <button onclick="runDemo('spike_milk_flour')" class="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-200 hover:border-amber-400 bg-amber-50/60 hover:bg-amber-50 transition active:scale-95 text-center">
+            <i data-lucide="zap" class="w-6 h-6 text-amber-600 mb-1"></i>
+            <span class="text-xs font-semibold text-slate-700">Демо Жюри</span>
+            <span class="text-[10px] text-amber-700 font-medium">Кейс: Рост цен</span>
+          </button>
+        </div>
+
+        <!-- Быстрые голосовые фразы для тестирования -->
+        <div class="pt-1">
+          <div class="text-[11px] font-semibold text-slate-500 mb-1.5">Быстрые голосовые образцы (Тараз):</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="runDemoVoice('kazakh_voice')" class="text-xs bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg text-slate-700 transition active:scale-95">
+              🇰🇿 «Аулие-Ата: 20 май Шедевр 840-тан...»
+            </button>
+            <button onclick="runDemoVoice('spike_milk_flour')" class="text-xs bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg text-slate-700 transition active:scale-95">
+              🇷🇺 «Прима: 25 шт Молоко Родина 440 ₸...»
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Загрузка / Индикатор обработки -->
+      <div id="loading-spinner" class="hidden bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center space-y-3">
+        <div class="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <div class="text-sm font-bold text-slate-800">Qabyldau AI анализирует документ...</div>
+        <p class="text-xs text-slate-500 max-w-xs mx-auto">Распознавание номенклатуры, сопоставление со справочником Тараза и проверка закупочных цен</p>
+      </div>
+
+      <!-- Карточка обработанной накладной -->
+      <div id="invoice-result" class="hidden space-y-3">
+        <!-- Алерт подорожания -->
+        <div id="price-spike-banner" class="hidden p-4 rounded-2xl bg-gradient-to-r from-rose-50 to-red-100 border-l-4 border-rose-500 shadow-sm">
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center shrink-0 mt-0.5">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-sm font-bold text-rose-900" id="spike-banner-title">🚨 Внимание: Рост закупочных цен!</h3>
+              <p class="text-xs text-rose-700 mt-0.5" id="spike-banner-desc">Поставщик поднял цены. Риск потери маржи: <strong id="spike-loss-val">2 050 ₸</strong> на этой партии!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Детали накладной -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div>
+              <span class="text-xs text-slate-400">Накладная:</span>
+              <div class="font-bold text-slate-900 text-sm" id="inv-number">KZ-7841/Т</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400">Поставщик:</span>
+              <div class="font-bold text-slate-900 text-sm" id="inv-supplier">ТОО "Прима Дистрибьюшн"</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs py-1">
+            <span class="text-slate-500">Дата поставки: <strong class="text-slate-700" id="inv-date">2026-10-14</strong></span>
+            <span class="text-slate-500">Сумма закупа: <strong class="text-base text-sky-600 font-extrabold" id="inv-total">42 450 ₸</strong></span>
+          </div>
+
+          <!-- Таблица позиций -->
+          <div class="overflow-x-auto custom-scroll -mx-4 px-4">
+            <table class="w-full text-left text-xs min-w-[340px]">
+              <thead>
+                <tr class="text-[11px] text-slate-400 border-b border-slate-100 uppercase tracking-wider">
+                  <th class="py-2">Товар</th>
+                  <th class="py-2">Кол-во</th>
+                  <th class="py-2">Закуп нов.</th>
+                  <th class="py-2">Закуп стар.</th>
+                  <th class="py-2 text-right">Реком. розница</th>
+                </tr>
+              </thead>
+              <tbody id="invoice-items-tbody" class="divide-y divide-slate-100">
+                <!-- Заполняется JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Кнопка сквозной отправки -->
+          <div class="pt-2">
+            <button onclick="syncToAllConnectedServices()" id="sync-all-btn" class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 transition active:scale-98 flex items-center justify-center space-x-2">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Подтвердить и внести во ВСЕ сервисы</span>
+            </button>
+          </div>
+
+          <!-- Результат синхронизации -->
+          <div id="sync-result-box" class="hidden p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
+            <div class="font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+              Синхронизация завершена:
+            </div>
+            <div id="sync-details-list" class="space-y-1 text-slate-600">
+              <!-- Список синхронизированных сервисов -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------- TAB 2: РАДАР МАРЖИ ----------------- -->
+    <section id="tab-radar" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2 mb-3">
+          <i data-lucide="radar" class="w-4 h-4 text-rose-500"></i>
+          Радар защиты маржинальности магазина
+        </h2>
+
+        <div class="grid grid-cols-2 gap-2 mb-4">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <div class="text-[11px] text-slate-400">Позиций с ростом цен</div>
+            <div class="text-xl font-extrabold text-rose-600" id="radar-spikes-count">4 товара</div>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <div class="text-[11px] text-slate-400">Стабильность поставщиков</div>
+            <div class="text-xl font-extrabold text-indigo-600" id="radar-stability">87%</div>
+          </div>
+        </div>
+
+        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Недавние скачки цен в Таразе</h3>
+        <div class="space-y-2" id="radar-spikes-list">
+          <!-- Заполняется JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------- TAB 3: КАТАЛОГ ТОВАРОВ ----------------- -->
+    <section id="tab-catalog" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-sky-600"></i>
+            Справочник товаров магазина
+          </h2>
+          <span class="text-xs text-slate-400" id="catalog-count">12 товаров</span>
+        </div>
+
+        <!-- Поиск -->
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+          <input type="text" id="catalog-search" oninput="filterCatalog()" placeholder="Поиск (Родина, Цесна, Шедевр)..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <div class="divide-y divide-slate-100" id="catalog-list">
+          <!-- Заполняется JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------- TAB 4: СЕРВИСЫ & ЭКСПОРТ ----------------- -->
+    <section id="tab-services" class="hidden space-y-4">
+      
+      <!-- Статус подключений -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <i data-lucide="plug" class="w-4 h-4 text-indigo-600"></i>
+            Связанные сервисы и учетные базы
+          </h2>
+          <button onclick="openSettingsModal()" class="text-xs text-sky-600 font-semibold hover:underline">
+            Настроить
+          </button>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <!-- Google Sheets -->
+          <div class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <span class="text-lg">📊</span>
+              <div>
+                <div class="font-bold text-slate-800">Google Таблицы</div>
+                <div class="text-[11px] text-slate-500" id="status-gs-target">Таблица онлайн-учета</div>
+              </div>
+            </div>
+            <button onclick="testConnector('google')" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 active:scale-95 text-[11px] font-medium">
+              Тест
+            </button>
+          </div>
+
+          <!-- Telegram Alerts -->
+          <div class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <span class="text-lg">✈️</span>
+              <div>
+                <div class="font-bold text-slate-800">Telegram Алерты</div>
+                <div class="text-[11px] text-slate-500" id="status-tg-target">Уведомления руководству</div>
+              </div>
+            </div>
+            <button onclick="testConnector('telegram')" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 active:scale-95 text-[11px] font-medium">
+              Тест
+            </button>
+          </div>
+
+          <!-- 1C Webhook -->
+          <div class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <span class="text-lg">🏢</span>
+              <div>
+                <div class="font-bold text-slate-800">1C / ERP REST API</div>
+                <div class="text-[11px] text-slate-500" id="status-webhook-target">Шлюз обмена CommerceML</div>
+              </div>
+            </div>
+            <button onclick="testConnector('webhook')" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100 active:scale-95 text-[11px] font-medium">
+              Тест
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Экспорт файлов -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+          Экспорт номенклатуры и накладных
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <a href="/api/export/excel" download class="p-3 rounded-xl border border-slate-200 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50 transition active:scale-95 flex items-center space-x-3 text-xs">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600"></i>
+            <div>
+              <div class="font-bold text-slate-800">Excel (.xlsx)</div>
+              <div class="text-[10px] text-slate-500">Сводный отчет</div>
+            </div>
+          </a>
+
+          <a href="/api/export/xml" download class="p-3 rounded-xl border border-slate-200 hover:border-amber-500 bg-amber-50/40 hover:bg-amber-50 transition active:scale-95 flex items-center space-x-3 text-xs">
+            <i data-lucide="file-code" class="w-5 h-5 text-amber-600"></i>
+            <div>
+              <div class="font-bold text-slate-800">1С 8.3 (XML)</div>
+              <div class="text-[10px] text-slate-500">CommerceML 2.0</div>
+            </div>
+          </a>
+
+          <a href="/api/export/kaspi" download class="p-3 rounded-xl border border-slate-200 hover:border-rose-500 bg-rose-50/40 hover:bg-rose-50 transition active:scale-95 flex items-center space-x-3 text-xs">
+            <i data-lucide="shopping-bag" class="w-5 h-5 text-rose-600"></i>
+            <div>
+              <div class="font-bold text-slate-800">Kaspi Pay (CSV)</div>
+              <div class="text-[10px] text-slate-500">Фид цен магазина</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sync Audit Log -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i data-lucide="list-checks" class="w-4 h-4 text-slate-600"></i>
+          Журнал фактической доставки (Sync Audit)
+        </h2>
+        <div class="overflow-x-auto custom-scroll -mx-4 px-4">
+          <table class="w-full text-left text-xs min-w-[320px]">
+            <thead>
+              <tr class="text-[10px] text-slate-400 border-b border-slate-100 uppercase">
+                <th class="py-1.5">Сервис</th>
+                <th class="py-1.5">Статус</th>
+                <th class="py-1.5">Строк</th>
+                <th class="py-1.5">Время</th>
+              </tr>
+            </thead>
+            <tbody id="sync-audit-tbody" class="divide-y divide-slate-100">
+              <!-- Заполняется JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================= BOTTOM NAVIGATION ======================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 py-1.5 px-4 flex justify-around items-center shadow-lg">
+    <button onclick="openTab('intake')" id="nav-btn-intake" class="flex flex-col items-center text-sky-600 font-bold transition active:scale-90">
+      <i data-lucide="scan" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5">Приемка</span>
+    </button>
+    <button onclick="openTab('radar')" id="nav-btn-radar" class="flex flex-col items-center text-slate-400 hover:text-slate-700 transition active:scale-90">
+      <i data-lucide="radar" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5">Радар</span>
+    </button>
+    <button onclick="openTab('catalog')" id="nav-btn-catalog" class="flex flex-col items-center text-slate-400 hover:text-slate-700 transition active:scale-90">
+      <i data-lucide="layers" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5">Каталог</span>
+    </button>
+    <button onclick="openTab('services')" id="nav-btn-services" class="flex flex-col items-center text-slate-400 hover:text-slate-700 transition active:scale-90">
+      <i data-lucide="plug" class="w-5 h-5"></i>
+      <span class="text-[10px] mt-0.5">Сервисы</span>
+    </button>
+  </nav>
+
+  <!-- ======================= ONBOARDING & SETTINGS MODAL ======================= -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto custom-scroll shadow-2xl animate-in slide-in-from-bottom duration-200">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="link-2" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900">Связывание сервисов</h3>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-700 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500">
+        Укажите ваши сервисы, чтобы AI в реальном времени разносил данные накладных и отправлял алерты цен:
+      </p>
+
+      <!-- Поля формы -->
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">📊 Google Sheets (Webhook URL):</label>
+          <input type="text" id="setting-google-url" placeholder="https://script.google.com/macros/s/..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+          <span class="text-[10px] text-slate-400">Строки прихода автоматически добавляются в таблицу</span>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">✈️ Telegram Chat ID (для алертов):</label>
+          <input type="text" id="setting-telegram-chat" placeholder="Ваш ID (например 589218321)" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+          <span class="text-[10px] text-slate-400">Сюда будут приходить срочные алерты о росте цен</span>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">🏢 1C / ERP Webhook URL:</label>
+          <input type="text" id="setting-webhook-url" placeholder="https://webhook.site/..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">🤖 Telegram Bot Token (от @BotFather):</label>
+          <input type="password" id="setting-telegram-token" placeholder="Например: 7891234567:AAF..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 font-mono text-[11px]">
+          <span class="text-[10px] text-slate-400">Нужен, чтобы бот отвечал на /start, принимал фото и аудио</span>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">🟢 OpenAI API Key (GPT-4o-mini & Whisper):</label>
+          <input type="password" id="setting-openai-key" placeholder="sk-proj-..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50 font-mono text-[11px]">
+          <span class="text-[10px] text-slate-400">Распознавание накладных через GPT-4o-mini и аудио через Whisper</span>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">🔑 Google Gemini API Key (Опционально):</label>
+          <input type="password" id="setting-gemini-key" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 font-mono text-[11px]">
+          <span class="text-[10px] text-slate-400">Резервный ключ Gemini Flash</span>
+        </div>
+      </div>
+
+      <div class="pt-2 flex space-x-2">
+        <button onclick="saveSettings()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl active:scale-95 transition text-xs shadow-md shadow-indigo-600/20">
+          Сохранить и привязать
+        </button>
+        <button onclick="closeSettingsModal()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs">
+          Отмена
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= JAVASCRIPT ======================= -->
+  <script>
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try { tg.enableClosingConfirmation(); } catch (e) {}
+    }
+
+    let currentInvoice = null;
+    let catalogData = [];
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+
+    // Инициализация при старте
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      loadSettings();
+      loadCatalog();
+      loadRadarStats();
+      loadSyncLogs();
+    });
+
+    // ----------------- НАВИГАЦИЯ ПО ВКЛАДКАМ -----------------
+    function openTab(tabId) {
+      const tabs = ['intake', 'radar', 'catalog', 'services'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`nav-btn-${t}`);
+        if (t === tabId) {
+          el.classList.remove('hidden');
+          btn.className = "flex flex-col items-center text-sky-600 font-bold transition active:scale-90";
+        } else {
+          el.classList.add('hidden');
+          btn.className = "flex flex-col items-center text-slate-400 hover:text-slate-700 transition active:scale-90";
+        }
+      });
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+      lucide.createIcons();
+    }
+
+    // ----------------- НАСТРОЙКИ И СВЯЗЫВАНИЕ -----------------
+    async function loadSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        document.getElementById("setting-google-url").value = data.google_sheets_url || "";
+        document.getElementById("setting-telegram-chat").value = data.telegram_chat_id || "";
+        document.getElementById("setting-telegram-token").value = data.telegram_token || "";
+        document.getElementById("setting-webhook-url").value = data.webhook_url || "";
+        
+        document.getElementById("status-gs-target").textContent = data.google_sheets_url ? "Подключено онлайн" : "Локальный эмулятор";
+        document.getElementById("status-tg-target").textContent = data.telegram_token ? (data.telegram_chat_id ? `Chat: ${data.telegram_chat_id}` : "Бот подключен") : "Токен не задан";
+        document.getElementById("status-webhook-target").textContent = data.webhook_url ? "REST Webhook активен" : "Эмулятор";
+      } catch (e) {
+        console.error("Load settings error:", e);
+      }
+    }
+
+    async function saveSettings() {
+      const payload = {
+        google_sheets_url: document.getElementById("setting-google-url").value.trim(),
+        telegram_chat_id: document.getElementById("setting-telegram-chat").value.trim(),
+        telegram_token: document.getElementById("setting-telegram-token").value.trim(),
+        webhook_url: document.getElementById("setting-webhook-url").value.trim(),
+        gemini_api_key: document.getElementById("setting-gemini-key").value.trim(),
+        openai_api_key: document.getElementById("setting-openai-key").value.trim()
+      };
+      try {
+        const res = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const ans = await res.json();
+        alert("✅ " + ans.message);
+        closeSettingsModal();
+        loadSettings();
+      } catch (e) {
+        alert("Ошибка сохранения: " + e);
+      }
+    }
+
+    function openSettingsModal() {
+      document.getElementById("settings-modal").classList.remove("hidden");
+    }
+    function closeSettingsModal() {
+      document.getElementById("settings-modal").classList.add("hidden");
+    }
+
+    async function testConnector(type) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("medium");
+      try {
+        const res = await fetch("/api/test_connector", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type })
+        });
+        const ans = await res.json();
+        alert(ans.success ? `✅ ${ans.connector_name}: ${ans.message}` : `⚠️ ${ans.connector_name}: ${ans.message}`);
+      } catch (e) {
+        alert("Сбой теста: " + e);
+      }
+    }
+
+    // ----------------- ПРИЕМКА ТОВАРА: ФОТО, ГОЛОС, ДЕМО -----------------
+    function showLoading() {
+      document.getElementById("loading-spinner").classList.remove("hidden");
+      document.getElementById("invoice-result").classList.add("hidden");
+    }
+    function hideLoading() {
+      document.getElementById("loading-spinner").classList.add("hidden");
+    }
+
+    async function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      showLoading();
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch("/api/process/photo", { method: "POST", body: formData });
+        const data = await res.json();
+        displayInvoice(data);
+      } catch (e) {
+        alert("Ошибка распознавания фото: " + e);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function runDemo(sampleId) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+      showLoading();
+      try {
+        const res = await fetch("/api/process/demo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sample_id: sampleId })
+        });
+        const data = await res.json();
+        displayInvoice(data);
+      } catch (e) {
+        alert("Сбой демо: " + e);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function runDemoVoice(sampleId) {
+      runDemo(sampleId);
+    }
+
+    // Запись голоса через микрофон браузера
+    async function toggleVoiceRecording() {
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/ogg" });
+            const formData = new FormData();
+            formData.append("file", audioBlob, "voice_intake.ogg");
+            showLoading();
+            try {
+              const res = await fetch("/api/process/voice", { method: "POST", body: formData });
+              const data = await res.json();
+              displayInvoice(data);
+            } catch (err) {
+              alert("Ошибка обработки голоса: " + err);
+            } finally {
+              hideLoading();
+            }
+          };
+          mediaRecorder.start();
+          isRecording = true;
+          document.getElementById("mic-btn").classList.add("pulse-record", "border-red-500", "bg-red-50");
+          document.getElementById("mic-text").textContent = "Запись...";
+          document.getElementById("mic-subtext").textContent = "Нажмите чтобы остановить";
+          if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("heavy");
+        } catch (e) {
+          alert("Микрофон недоступен: используйте готовые голосовые образцы ниже.");
+        }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        document.getElementById("mic-btn").classList.remove("pulse-record", "border-red-500", "bg-red-50");
+        document.getElementById("mic-text").textContent = "Голос";
+        document.getElementById("mic-subtext").textContent = "Қаз / Рус приемка";
+        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("medium");
+      }
+    }
+
+    // Отображение карточки накладной
+    function displayInvoice(inv) {
+      currentInvoice = inv;
+      document.getElementById("inv-number").textContent = inv.invoice_number || "б/н";
+      document.getElementById("inv-supplier").textContent = inv.supplier_name || "Не указан";
+      document.getElementById("inv-date").textContent = inv.date || "Сегодня";
+      document.getElementById("inv-total").textContent = (inv.total_amount || 0).toLocaleString() + " ₸";
+
+      // Алерт о росте цен
+      const banner = document.getElementById("price-spike-banner");
+      if (inv.spikes_count > 0) {
+        banner.classList.remove("hidden");
+        document.getElementById("spike-loss-val").textContent = (inv.total_potential_loss_kzt || 0).toLocaleString() + " ₸";
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("warning");
+      } else {
+        banner.classList.add("hidden");
+      }
+
+      // Таблица позиций
+      const tbody = document.getElementById("invoice-items-tbody");
+      tbody.innerHTML = "";
+      (inv.items || []).forEach(it => {
+        const isSpike = it.is_price_increase;
+        const tr = document.createElement("tr");
+        tr.className = isSpike ? "bg-rose-50/60" : "";
+        tr.innerHTML = `
+          <td class="py-2 pr-2">
+            <div class="font-bold text-slate-800">${it.product_name}</div>
+            <div class="text-[10px] text-slate-400">${it.category || 'Общее'}</div>
+          </td>
+          <td class="py-2 text-slate-600">${it.quantity} ${it.unit}</td>
+          <td class="py-2 font-bold ${isSpike ? 'text-rose-600' : 'text-slate-800'}">
+            ${it.purchase_price} ₸
+            ${isSpike ? `<span class="block text-[9px] text-rose-500">+${it.price_change_pct}%</span>` : ''}
+          </td>
+          <td class="py-2 text-slate-400">${it.previous_price ? it.previous_price + ' ₸' : '-'}</td>
+          <td class="py-2 text-right font-bold text-emerald-600">
+            ${it.recommended_retail_price} ₸
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("invoice-result").classList.remove("hidden");
+      document.getElementById("sync-result-box").classList.add("hidden");
+      lucide.createIcons();
+    }
+
+    // ----------------- СИНХРОНИЗАЦИЯ ВО ВСЕ СЕРВИСЫ -----------------
+    async function syncToAllConnectedServices() {
+      if (!currentInvoice) return;
+      const btn = document.getElementById("sync-all-btn");
+      btn.disabled = true;
+      btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> <span>Разнесение данных...</span>`;
+      
+      try {
+        const res = await fetch("/api/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(currentInvoice)
+        });
+        const ans = await res.json();
+        
+        const syncBox = document.getElementById("sync-result-box");
+        const list = document.getElementById("sync-details-list");
+        list.innerHTML = "";
+        
+        (ans.results || []).forEach(r => {
+          const div = document.createElement("div");
+          div.className = r.success ? "text-emerald-700" : "text-rose-600";
+          div.innerHTML = `• <strong>${r.connector_name}</strong>: ${r.message}`;
+          list.appendChild(div);
+        });
+        syncBox.classList.remove("hidden");
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+        
+        loadRadarStats();
+        loadCatalog();
+        loadSyncLogs();
+      } catch (e) {
+        alert("Сбой синхронизации: " + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>Подтвердить и внести во ВСЕ сервисы</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    // ----------------- КАТАЛОГ И РАДАР -----------------
+    async function loadCatalog() {
+      try {
+        const res = await fetch("/api/products");
+        catalogData = await res.json();
+        document.getElementById("catalog-count").textContent = `${catalogData.length} товаров`;
+        renderCatalog(catalogData);
+      } catch (e) {
+        console.error("Catalog load error:", e);
+      }
+    }
+
+    function renderCatalog(items) {
+      const container = document.getElementById("catalog-list");
+      container.innerHTML = "";
+      items.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "py-2.5 flex items-center justify-between text-xs";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-slate-800">${p.name}</div>
+            <div class="text-[10px] text-slate-400">${p.category} • ${p.unit}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-slate-500">Закуп: <strong>${p.current_purchase_price} ₸</strong></div>
+            <div class="text-emerald-600 font-bold">Розница: ${p.recommended_retail_price} ₸</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterCatalog() {
+      const q = document.getElementById("catalog-search").value.toLowerCase();
+      const filtered = catalogData.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+      renderCatalog(filtered);
+    }
+
+    async function loadRadarStats() {
+      try {
+        const res = await fetch("/api/radar");
+        const r = await res.json();
+        document.getElementById("hero-saved-margin").textContent = `+${Math.round(r.saved_margin_kzt || 38400).toLocaleString()} ₸`;
+        document.getElementById("radar-spikes-count").textContent = `${r.spikes_count || 4} товара`;
+        document.getElementById("radar-stability").textContent = `${r.stability_index_pct || 87}%`;
+
+        const list = document.getElementById("radar-spikes-list");
+        list.innerHTML = "";
+        (r.recent_spikes || []).forEach(s => {
+          const div = document.createElement("div");
+          div.className = "p-3 rounded-xl border border-rose-100 bg-rose-50/50 flex items-center justify-between text-xs";
+          div.innerHTML = `
+            <div>
+              <div class="font-bold text-slate-900">${s.product_name}</div>
+              <div class="text-[10px] text-slate-500">${s.supplier_name || 'Поставщик'}</div>
+            </div>
+            <div class="text-right">
+              <span class="inline-block bg-rose-500 text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded-md">
+                +${s.price_change_pct}%
+              </span>
+              <div class="text-[11px] text-slate-600 mt-0.5">${s.previous_price} ➔ <strong>${s.purchase_price} ₸</strong></div>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      } catch (e) {
+        console.error("Radar stats error:", e);
+      }
+    }
+
+    async function loadSyncLogs() {
+      try {
+        const res = await fetch("/api/sync_logs");
+        const logs = await res.json();
+        const tbody = document.getElementById("sync-audit-tbody");
+        tbody.innerHTML = "";
+        if (logs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="py-2 text-center text-slate-400">Журнал пока пуст</td></tr>`;
+          return;
+        }
+        logs.forEach(l => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="py-1.5 font-bold text-slate-700">${l.service_name}</td>
+            <td class="py-1.5">
+              <span class="px-1.5 py-0.5 text-[9px] font-bold rounded ${l.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${l.status}
+              </span>
+            </td>
+            <td class="py-1.5 text-slate-500">${l.items_count}</td>
+            <td class="py-1.5 text-slate-400">${(l.created_at || '').substring(11, 19)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.error("Sync logs error:", e);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+# Secrets and credentials
+.env
+*.env.local
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Databases
+database/*.db
+database/*.sqlite3
+*.db
+*.sqlite
+
+# Large binaries and archives
+cloudflared
+*.tgz
+*.tar.gz
+*.zip
+
+# System and OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Library/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Export outputs and logs
+exports/*
+!exports/.gitkeep
+*.log
+.streamlit/
