@@ -196,7 +196,27 @@ class TelegramBotWorker:
             else:
                 curr_name = get_setting("store_name", "Магазин «Береке»")
                 curr_city = get_setting("store_city", "г. Тараз")
-                self._send_message(token, chat_id, f"🏪 *Текущий магазин:* {curr_name}\n📍 *Город:* {curr_city}\n\nЧтобы изменить название, отправьте команду:\n`/store Название Вашего Магазина`\n\n_Например:_\n`/store Продукты у Дома (Тараз)`")
+        # Команда /webapp для привязки ссылки Mini App (например с Railway)
+        if msg_text.startswith("/webapp"):
+            parts = msg_text.split(" ", 1)
+            if len(parts) > 1 and parts[1].strip():
+                new_url = parts[1].strip().rstrip("/")
+                if not new_url.startswith("http"):
+                    new_url = f"https://{new_url}"
+                set_setting("webapp_url", new_url)
+                try:
+                    r = requests.post(f"https://api.telegram.org/bot{token}/setChatMenuButton", json={
+                        "menu_button": {"type": "web_app", "text": "📱 Открыть Mini App", "web_app": {"url": new_url}}
+                    }, timeout=8)
+                    if r.status_code == 200:
+                        self._send_message(token, chat_id, f"✅ Кнопка Mini App в Telegram успешно обновлена!\n🌐 Новый адрес: {new_url}")
+                    else:
+                        self._send_message(token, chat_id, f"⚠️ Адрес сохранен ({new_url}), но ответ Telegram: {r.text}")
+                except Exception as e:
+                    self._send_message(token, chat_id, f"❌ Ошибка вызова Telegram API: {e}")
+            else:
+                curr = self.get_webapp_url()
+                self._send_message(token, chat_id, f"📱 *Текущий адрес Mini App:*\n`{curr}`\n\nЧтобы привязать домен (например от Railway), отправьте команду:\n`/webapp https://ваш-домен.up.railway.app`")
             return
 
         # Команда /start
