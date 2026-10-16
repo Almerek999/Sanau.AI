@@ -1,0 +1,50 @@
+{
+  "event": "invoice_processed",
+  "source": "Sanau.AI",
+  "timestamp": "2026-10-16T21:40:00+05:00",
+  "store": {
+    "name": "Магазин «Береке»",
+    "city": "г. Тараз",
+    "target_margin_pct": 25.0
+  },
+  "invoice": {
+    "invoice_number": "ВХ-8421",
+    "date": "16.10.2026",
+    "supplier_name": "ТОО «Родина Агро»",
+    "total_sum_kzt": 25600.0,
+    "spikes_detected": 1,
+    "potential_loss_kzt": 1000.0,
+    "items": [
+      {
+        "line_number": 1,
+        "product_name": "Молоко 'Родина' 3.2% 1л",
+        "barcode": "4870001234567",
+        "category": "Молочная продукция",
+        "unit": "шт",
+        "quantity": 20,
+        "purchase_price": 440.0,
+        "previous_price": 390.0,
+        "price_change_kzt": 50.0,
+        "price_change_pct": 12.82,
+        "is_price_increase": true,
+        "recommended_retail_price": 570.0,
+        "total_line_sum": 8800.0
+      },
+      {
+        "line_number": 2,
+        "product_name": "Масло сливочное 'Президент' 82.5% 180г",
+        "barcode": "4870007654321",
+        "category": "Молочная продукция",
+        "unit": "шт",
+        "quantity": 10,
+        "purchase_price": 1680.0,
+        "previous_price": 1680.0,
+        "price_change_kzt": 0.0,
+        "price_change_pct": 0.0,
+        "is_price_increase": false,
+        "recommended_retail_price": 2180.0,
+        "total_line_sum": 16800.0
+      }
+    ]
+  }
+}
