@@ -67,37 +67,57 @@
         size: landscape;
         margin: 0;
       }
-      body {
+      html, body {
         background: #070a13 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         margin: 0 !important;
         padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
       }
       .no-print {
         display: none !important;
       }
       main {
+        display: block !important;
         padding: 0 !important;
         margin: 0 !important;
-        max-width: 100% !important;
+        max-width: none !important;
+        width: 100% !important;
+        height: auto !important;
       }
       .slide-viewport {
+        display: block !important;
+        aspect-ratio: auto !important;
+        overflow: visible !important;
         border: none !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        max-width: 100vw !important;
-        min-height: 100vh !important;
-        background: #070a13 !important;
+        max-width: none !important;
+        width: 100% !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
       }
       .slide, .slide.hidden {
         display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
         page-break-after: always !important;
         page-break-inside: avoid !important;
+        break-after: page !important;
+        break-inside: avoid !important;
         height: 100vh !important;
+        max-height: 100vh !important;
+        min-height: 100vh !important;
         width: 100vw !important;
-        padding: 2.5rem 3.5rem !important;
+        padding: 2.2rem 3rem !important;
         box-sizing: border-box !important;
+        overflow: hidden !important;
+        background: #070a13 !important;
       }
       #speaker-notes-drawer {
         display: none !important;
@@ -171,7 +191,7 @@
 
   <!-- ================= MAIN SLIDE VIEWPORT ================= -->
   <main class="flex-1 flex items-center justify-center p-3 sm:p-5 lg:p-6">
-    <div class="slide-viewport w-full max-w-6xl aspect-[16/10] sm:aspect-[16/9] min-h-[580px] glass-card rounded-2xl shadow-2xl overflow-hidden flex flex-col justify-between p-6 sm:p-10 relative border border-slate-700/70">
+    <div class="slide-viewport w-full max-w-6xl aspect-auto md:aspect-[16/9] min-h-[560px] sm:min-h-[580px] glass-card rounded-2xl shadow-2xl overflow-hidden flex flex-col justify-between p-5 sm:p-7 md:p-8 md:px-10 relative border border-slate-700/70">
 
       <!-- ================= SLIDE 1: ТИТУЛЬНЫЙ ================= -->
       <div class="slide slide-enter flex-1 flex flex-col justify-between" id="slide-1" data-notes="Здравствуйте! Меня зовут [Имя], и мы представляем Sanau.AI — мультимодального ИИ-товароведа, который спасает магазины у дома от скрытого роста цен и автоматизирует рутину с накладными прямо со смартфона за 2 секунды. На слайде есть QR-код — вы можете отсканировать его прямо сейчас и увидеть живого бота в действии.">
@@ -356,38 +376,38 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 my-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-5 my-auto">
           <!-- Левая часть: логика алгоритма -->
-          <div class="sm:col-span-7 glass-card p-5 rounded-2xl space-y-2.5">
-            <h3 class="text-sm font-bold text-white flex items-center gap-2 mb-2">
+          <div class="sm:col-span-7 glass-card p-4 sm:p-5 rounded-2xl space-y-2">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2 mb-1.5">
               <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
               Алгоритм защиты рентабельности в реальном времени:
             </h3>
-            <div class="space-y-2 text-xs">
-              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/50">
+            <div class="space-y-1.5 text-xs">
+              <div class="p-2 sm:p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/50">
                 <strong class="text-sky-300">1. Авто-сверка с историей:</strong> Сравнение закупочной цены товара с прошлыми приходами по контрагенту.
               </div>
-              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-rose-900/40">
+              <div class="p-2 sm:p-2.5 rounded-xl bg-slate-900/80 border border-rose-900/40">
                 <strong class="text-rose-400">2. Детекция скачка:</strong> Мгновенный сигнал при удорожании хотя бы на 1 тенге (например, +12.8%).
               </div>
-              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-amber-900/40">
+              <div class="p-2 sm:p-2.5 rounded-xl bg-slate-900/80 border border-amber-900/40">
                 <strong class="text-amber-300">3. Расчет кассового риска:</strong> Умножение разницы на объем партии = Точный прогнозируемый убыток.
               </div>
-              <div class="p-2.5 rounded-xl bg-slate-900/80 border border-emerald-900/40">
+              <div class="p-2 sm:p-2.5 rounded-xl bg-slate-900/80 border border-emerald-900/40">
                 <strong class="text-emerald-400">4. Автоматическая розница:</strong> Расчет новой цены с гарантией плановой маржи магазина (25%).
               </div>
             </div>
           </div>
 
           <!-- Правая часть: реальный кейс Тараза -->
-          <div class="sm:col-span-5 bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 p-5 rounded-2xl border border-indigo-500/40 flex flex-col justify-between shadow-xl shadow-indigo-500/10">
+          <div class="sm:col-span-5 bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 p-4 sm:p-5 rounded-2xl border border-indigo-500/40 flex flex-col justify-between shadow-xl shadow-indigo-500/10">
             <div>
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono text-rose-400 uppercase font-black tracking-wider">🚨 РЕАЛЬНЫЙ КЕЙС</span>
                 <span class="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">Скачок цены</span>
               </div>
-              <div class="text-base font-black text-white mt-1.5">Молоко «Родина» 3.2% 1л</div>
-              <div class="space-y-1.5 mt-3 text-xs">
+              <div class="text-base font-black text-white mt-1">Молоко «Родина» 3.2% 1л</div>
+              <div class="space-y-1 mt-2.5 text-xs">
                 <div class="flex justify-between text-slate-400">Старый закуп: <span class="text-white font-mono font-semibold">390 ₸</span></div>
                 <div class="flex justify-between text-slate-400">Новый закуп: <span class="text-rose-400 font-bold font-mono">440 ₸ (+12.8%)</span></div>
                 <div class="flex justify-between text-slate-400">Партия: <span class="text-white font-mono font-semibold">20 шт</span></div>
@@ -395,9 +415,9 @@
               </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-slate-800 bg-emerald-950/50 p-3 rounded-xl border border-emerald-800/60">
+            <div class="mt-3 pt-2.5 border-t border-slate-800 bg-emerald-950/50 p-2.5 rounded-xl border border-emerald-800/60">
               <div class="text-[10px] font-bold text-emerald-400">Решение Sanau.AI:</div>
-              <div class="text-base font-black text-white mt-0.5">Новая розница: 570 ₸</div>
+              <div class="text-sm font-black text-white mt-0.5">Новая розница: 570 ₸</div>
               <div class="text-[10px] text-emerald-300 mt-0.5">Маржа 23-25% полностью защищена!</div>
             </div>
           </div>
@@ -534,29 +554,29 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 my-auto">
           <!-- Тариф 1 -->
-          <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div class="glass-card p-4 sm:p-5 rounded-2xl flex flex-col justify-between">
             <div>
               <div class="text-xs font-bold text-slate-400">Базовый (Starter)</div>
               <div class="text-xl sm:text-2xl font-black text-white mt-1">7 990 ₸ <span class="text-xs text-slate-400 font-normal">/ мес</span></div>
-              <ul class="text-xs text-slate-300 space-y-1.5 mt-3">
+              <ul class="text-xs text-slate-300 space-y-1 mt-2.5">
                 <li>✓ До 50 накладных в месяц</li>
                 <li>✓ Фото и текстовая приемка</li>
                 <li>✓ Радар скачков цен закупа</li>
                 <li>✓ Экспорт в Google Таблицы</li>
               </ul>
             </div>
-            <div class="text-[10px] text-slate-500 pt-3 border-t border-slate-800 mt-3">Для небольших магазинов</div>
+            <div class="text-[10px] text-slate-500 pt-2.5 border-t border-slate-800 mt-2.5">Для небольших магазинов</div>
           </div>
 
           <!-- Тариф 2 -->
-          <div class="bg-gradient-to-b from-indigo-900/40 via-slate-900 to-slate-900 p-5 rounded-2xl border-2 border-indigo-500 flex flex-col justify-between shadow-xl shadow-indigo-500/10 relative">
-            <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-indigo-600 text-[10px] font-bold text-white">ХИТ</span>
+          <div class="bg-gradient-to-b from-indigo-900/40 via-slate-900 to-slate-900 p-4 sm:p-5 rounded-2xl border-2 border-indigo-500 flex flex-col justify-between shadow-xl shadow-indigo-500/10 relative">
+            <span class="absolute top-3.5 right-3.5 px-2 py-0.5 rounded-full bg-indigo-600 text-[9px] font-extrabold text-white uppercase tracking-wider">ХИТ</span>
             <div>
-              <div class="text-xs font-bold text-indigo-400">Бизнес (Pro)</div>
+              <div class="text-xs font-bold text-indigo-400 pr-12">Бизнес (Pro)</div>
               <div class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">14 990 ₸ <span class="text-xs text-slate-400 font-normal">/ мес</span></div>
-              <ul class="text-xs text-slate-200 space-y-1.5 mt-3">
+              <ul class="text-xs text-slate-200 space-y-1 mt-2.5">
                 <li>✓ <strong>Безлимитные накладные</strong></li>
                 <li>✓ <strong>Голос на казахском & русском</strong></li>
                 <li>✓ Шлюз 1C / ERP Webhook + XML</li>
@@ -564,22 +584,22 @@
                 <li>✓ Telegram алерты директору</li>
               </ul>
             </div>
-            <div class="text-[10px] text-emerald-400 font-bold pt-3 border-t border-slate-800 mt-3">Окупаемость: 2-3 дня</div>
+            <div class="text-[10px] text-emerald-400 font-bold pt-2.5 border-t border-slate-800 mt-2.5">Окупаемость: 2-3 дня</div>
           </div>
 
           <!-- Тариф 3 -->
-          <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div class="glass-card p-4 sm:p-5 rounded-2xl flex flex-col justify-between">
             <div>
               <div class="text-xs font-bold text-slate-400">Сеть (Enterprise)</div>
               <div class="text-xl sm:text-2xl font-black text-white mt-1">39 990 ₸ <span class="text-xs text-slate-400 font-normal">/ мес</span></div>
-              <ul class="text-xs text-slate-300 space-y-1.5 mt-3">
+              <ul class="text-xs text-slate-300 space-y-1 mt-2.5">
                 <li>✓ До 5 торговых точек / складов</li>
                 <li>✓ Сводная аналитика сети</li>
                 <li>✓ Приоритетная обработка AI</li>
                 <li>✓ Выделенный саппорт в Telegram</li>
               </ul>
             </div>
-            <div class="text-[10px] text-slate-500 pt-3 border-t border-slate-800 mt-3">Для сетей минимаркетов</div>
+            <div class="text-[10px] text-slate-500 pt-2.5 border-t border-slate-800 mt-2.5">Для сетей минимаркетов</div>
           </div>
         </div>
 
@@ -597,51 +617,51 @@
         </div>
 
         <div class="overflow-x-auto my-auto">
-          <table class="w-full text-left text-xs">
+          <table class="w-full text-left text-[11px] sm:text-xs">
             <thead>
               <tr class="border-b border-slate-700 text-slate-400">
-                <th class="py-2.5 px-3">Критерий</th>
-                <th class="py-2.5 px-3">Тетрадь / Excel</th>
-                <th class="py-2.5 px-3">1С:Предприятие</th>
-                <th class="py-2.5 px-3">Обычные OCR сканеры</th>
-                <th class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold rounded-t-xl">Sanau.AI ⚡</th>
+                <th class="py-2 px-2.5 sm:px-3">Критерий</th>
+                <th class="py-2 px-2.5 sm:px-3">Тетрадь / Excel</th>
+                <th class="py-2 px-2.5 sm:px-3">1С:Предприятие</th>
+                <th class="py-2 px-2.5 sm:px-3">Обычные OCR сканеры</th>
+                <th class="py-2 px-2.5 sm:px-3 bg-indigo-900/40 text-emerald-400 font-bold rounded-t-xl">Sanau.AI ⚡</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800 text-slate-300">
               <tr>
-                <td class="py-2.5 px-3 font-semibold text-white">Входной барьер</td>
-                <td class="py-2.5 px-3">Низкий</td>
-                <td class="py-2.5 px-3 text-rose-400">Очень высокий (ПК, софт)</td>
-                <td class="py-2.5 px-3">Средний</td>
-                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">0 (в Telegram на телефоне)</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 font-semibold text-white">Входной барьер</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">Низкий</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">Очень высокий (ПК, софт)</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">Средний</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 bg-indigo-900/40 text-emerald-400 font-bold">0 (в Telegram на телефоне)</td>
               </tr>
               <tr>
-                <td class="py-2.5 px-3 font-semibold text-white">Голос на казахском/русском</td>
-                <td class="py-2.5 px-3 text-rose-400">❌ Нет</td>
-                <td class="py-2.5 px-3 text-rose-400">❌ Нет</td>
-                <td class="py-2.5 px-3 text-rose-400">❌ Нет</td>
-                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">✅ Whisper + NLP (KZ/RU)</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 font-semibold text-white">Голос на казахском/русском</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">❌ Нет</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">❌ Нет</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">❌ Нет</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 bg-indigo-900/40 text-emerald-400 font-bold">✅ Whisper + NLP (KZ/RU)</td>
               </tr>
               <tr>
-                <td class="py-2.5 px-3 font-semibold text-white">Радар защиты маржи</td>
-                <td class="py-2.5 px-3 text-rose-400">❌ Потери маржи</td>
-                <td class="py-2.5 px-3 text-amber-400">⚠️ Сложные отчеты</td>
-                <td class="py-2.5 px-3 text-rose-400">❌ Только текст</td>
-                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">✅ Автоматически 100%</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 font-semibold text-white">Радар защиты маржи</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">❌ Потери маржи</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-amber-400">⚠️ Сложные отчеты</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">❌ Только текст</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 bg-indigo-900/40 text-emerald-400 font-bold">✅ Автоматически 100%</td>
               </tr>
               <tr>
-                <td class="py-2.5 px-3 font-semibold text-white">Скорость приемки</td>
-                <td class="py-2.5 px-3">15–30 минут</td>
-                <td class="py-2.5 px-3">10–20 минут</td>
-                <td class="py-2.5 px-3">2–4 минуты</td>
-                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold">⚡ 2–3 секунды</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 font-semibold text-white">Скорость приемки</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">15–30 минут</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">10–20 минут</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">2–4 минуты</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 bg-indigo-900/40 text-emerald-400 font-bold">⚡ 2–3 секунды</td>
               </tr>
               <tr>
-                <td class="py-2.5 px-3 font-semibold text-white">Цена внедрения</td>
-                <td class="py-2.5 px-3">0 ₸ (но убытки)</td>
-                <td class="py-2.5 px-3 text-rose-400">От 250 000 ₸ + 1С-ник</td>
-                <td class="py-2.5 px-3">От $25 / мес</td>
-                <td class="py-2.5 px-3 bg-indigo-900/40 text-emerald-400 font-bold rounded-b-xl">От 7 990 ₸ / мес</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 font-semibold text-white">Цена внедрения</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">0 ₸ (но убытки)</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 text-rose-400">От 250 000 ₸ + 1С-ник</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3">От $25 / мес</td>
+                <td class="py-1.5 sm:py-2 px-2.5 sm:px-3 bg-indigo-900/40 text-emerald-400 font-bold rounded-b-xl">От 7 990 ₸ / мес</td>
               </tr>
             </tbody>
           </table>
@@ -724,12 +744,12 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 my-auto">
           <!-- Левая часть: статус готовности -->
-          <div class="sm:col-span-6 glass-card p-5 rounded-2xl space-y-3">
+          <div class="sm:col-span-6 glass-card p-4 sm:p-5 rounded-2xl space-y-2.5">
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
               Текущий статус продукта:
             </h3>
-            <ul class="text-xs text-slate-200 space-y-2.5">
+            <ul class="text-xs text-slate-200 space-y-2">
               <li class="flex items-center gap-2 text-emerald-400">
                 <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
                 <span>Облачный сервер 24/7 развернут на Railway</span>
@@ -754,16 +774,16 @@
           </div>
 
           <!-- Правая часть: БОЛЬШОЙ QR-КОД КАРТОЧКА -->
-          <div class="sm:col-span-6 bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-900 p-5 rounded-2xl border-2 border-indigo-500/60 flex items-center gap-5 shadow-2xl shadow-indigo-500/20">
-            <div class="p-3 bg-white rounded-2xl shadow-2xl shrink-0">
-              <img src="data:image/png;base64,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" alt="Scan QR Code @Sanau_AI_bot" class="w-32 h-32 sm:w-36 sm:h-36 object-contain">
+          <div class="sm:col-span-6 bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-900 p-4 sm:p-5 rounded-2xl border-2 border-indigo-500/60 flex items-center gap-4 sm:gap-5 shadow-2xl shadow-indigo-500/20">
+            <div class="p-2.5 sm:p-3 bg-white rounded-2xl shadow-2xl shrink-0">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVwAAAFcCAIAAAALdJF7AAAF8ElEQVR4nO3dMZJjNRRAUZrqBRCyB/a/FPZAyA5MAsFNQFUjXr/vPieesvVt9y0FeqOP1+v1E8A/fv7qBQC7iAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKIAxOetF/rl199uvdTj/PnH7//5b259Prfea/J1Jvkd/jg7BSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgRAEIUQDi2uzDiW3n5E9MzixM2jYfMTlnse27ODE502GnAIQoACEKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCMzj6cmDzjPXkG/on3EUzONWzzrr/DE3YKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCIAhCiAMS62Yd3tW1G4NZ5+8n7GphhpwCEKAAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAmH14mG1zBNvWw4+zUwBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUg1s0+vOtZ+sk7HW65teYnfqdPXPMtdgpAiAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKIAxOjswxPP/086OW9/8hlue50Tt9Zz672+MzsFIEQBCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAOLj9Xp99Rr42+T5/1sm5wi2Pfu7slMAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIK7d+7DtPoJbbp3tP1nzE+81eOKat90xse3vwk4BCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBi992HyfPuJbTMUk2fgt53/P/HE57q15hNmH4D/hSgAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQKybfdh23v6WJ841PPH+iBPf+bdxwk4BCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBidfTjxxDsC3nWmY9uzn3ji72cbOwUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAYt29DyeeeGeBZ9/zXk+cR3DvA/BlRAEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEA4nPyzSbPnG87377t2SfnI7bZNh+x7buwUwBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgrs0+PPH/9n/imreZ/AwnX+fEtt/PLXYKQIgCEKIAhCgAIQpAiAIQogCEKAAhCkCIAhCiAMTH6/X66jXE5FzDrXPyk+fSnzjTMfle2+YInjjPYqcAhCgAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQFybfZg8T37LtnPyJ7bNazzxM7xl8ruYnKGwUwBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUg1t378K62nW8/sW1mYfLz2fZ9Ta7HTgEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSA+Lz1QtvOyU/adhfDLU98rm0zC09kpwCEKAAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAXJt9OPHEM+e3zu1ve/Zbz/Wu8xqTts1r2CkAIQpAiAIQogCEKAAhCkCIAhCiAIQoACEKQIgCEKOzDycmz9JvOyd/6wz85Fn6W+s5sW3O4l3ZKQAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAiAIQ62Yf+HeTcwTbZkNO3Frzd57XsFMAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIMw+DNl2Bn5yRuBd5xEm7+mY/JztFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgRAGIdbMPT7xr4MTkc02epd821zDp1rNv+83bKQAhCkCIAhCiAIQoACEKQIgCEKIAhCgAIQpAiAIQo7MPTzzffsvkHQG3XueWW+81+fmceNf3slMAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFID5er9dXrwFYxE4BCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgBAFIEQBCFEAQhSAEAUgRAEIUQBCFIAQBSBEAQhRAEIUgPgLGpKPuxec5uIAAAAASUVORK5CYII=" alt="Scan QR Code @Sanau_AI_bot" class="w-28 h-28 sm:w-32 sm:h-32 object-contain">
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-1.5">
               <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 Live Демо
               </span>
-              <h3 class="text-lg sm:text-xl font-black text-white leading-tight">Отсканируйте камерой смартфона</h3>
+              <h3 class="text-base sm:text-lg font-black text-white leading-tight">Отсканируйте камерой смартфона</h3>
               <a href="https://t.me/Sanau_AI_bot" target="_blank" class="block text-indigo-400 hover:text-indigo-300 font-extrabold text-sm font-mono">
                 @Sanau_AI_bot ↗
               </a>

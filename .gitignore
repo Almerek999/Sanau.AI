@@ -48,3 +48,6 @@ exports/*
 !exports/.gitkeep
 *.log
 .streamlit/
+
+# Temporary scratch files
+scratch/
