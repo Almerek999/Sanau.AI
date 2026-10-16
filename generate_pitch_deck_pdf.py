@@ -80,6 +80,15 @@ def slide_1(c):
     c.setFillColor(TEXT_WHITE)
     c.drawString(40, PAGE_HEIGHT - 180, "Sanau.AI 📦⚡")
     
+    # QR-код на титульном слайде
+    qr_path = Path(__file__).resolve().parent / "static" / "qr_bot.png"
+    if qr_path.exists():
+        draw_card(c, PAGE_WIDTH - 170, PAGE_HEIGHT - 175, 130, 135, bg_color=CARD_DARK, border_color=PRIMARY)
+        c.drawImage(str(qr_path), PAGE_WIDTH - 158, PAGE_HEIGHT - 145, 105, 105, preserveAspectRatio=True)
+        c.setFont("Arial-Bold", 8)
+        c.setFillColor(TEXT_WHITE)
+        c.drawCentredString(PAGE_WIDTH - 105, PAGE_HEIGHT - 163, "SCAN @Sanau_AI_bot")
+    
     # Подзаголовок
     c.setFont("Arial-Bold", 20)
     c.setFillColor(ACCENT_SKY)
@@ -635,35 +644,49 @@ def slide_10(c):
         c.drawString(65, cur_y, desc)
         cur_y -= 26
 
-    # Правая колонка: призыв к действию и контакты
+    # Правая колонка: призыв к действию и QR-код
     right_x = 40 + left_w + 20
     right_w = PAGE_WIDTH - 40 - right_x
     draw_card(c, right_x, 110, right_w, 360, bg_color=colors.HexColor("#1b2840"), border_color=PRIMARY)
     
-    c.setFont("Arial-Bold", 18)
+    c.setFont("Arial-Bold", 17)
     c.setFillColor(TEXT_WHITE)
-    c.drawString(right_x + 25, 425, "Попробуйте прямо сейчас!")
+    c.drawString(right_x + 20, 430, "Попробуйте прямо сейчас!")
     
-    c.setFont("Arial", 11)
+    c.setFont("Arial", 10.5)
     c.setFillColor(TEXT_MUTED)
-    c.drawString(right_x + 25, 395, "Откройте Telegram и запустите бота:")
-    
-    draw_card(c, right_x + 20, 280, right_w - 40, 90, bg_color=PRIMARY)
-    c.setFont("Arial-Bold", 22)
-    c.setFillColor(TEXT_WHITE)
-    c.drawCentredString(right_x + (right_w - 40) / 2 + 20, 335, "@Sanau_AI_bot")
-    c.setFont("Arial", 11)
-    c.setFillColor(colors.HexColor("#c7d2fe"))
-    c.drawCentredString(right_x + (right_w - 40) / 2 + 20, 305, "Telegram Bot & Mini App")
-    
+    c.drawString(right_x + 20, 408, "Отсканируйте камерой телефона:")
+
+    qr_path = Path(__file__).resolve().parent / "static" / "qr_bot.png"
+    if qr_path.exists():
+        draw_card(c, right_x + 20, 240, 140, 150, bg_color=colors.HexColor("#0f172a"), border_color=ACCENT_SKY)
+        c.drawImage(str(qr_path), right_x + 27, 260, 125, 125, preserveAspectRatio=True)
+        c.setFont("Arial-Bold", 9)
+        c.setFillColor(TEXT_WHITE)
+        c.drawCentredString(right_x + 90, 248, "@Sanau_AI_bot")
+        
+    # Справа от QR-кода
     c.setFont("Arial-Bold", 13)
-    c.setFillColor(TEXT_WHITE)
-    c.drawString(right_x + 25, 230, "Контакты основателя:")
-    c.setFont("Arial", 11)
+    c.setFillColor(ACCENT_GREEN)
+    c.drawString(right_x + 175, 360, "Telegram Bot & App")
+    
+    c.setFont("Arial", 9.5)
     c.setFillColor(TEXT_MUTED)
-    c.drawString(right_x + 25, 200, "📱 Telegram: @Sanau_AI_bot")
-    c.drawString(right_x + 25, 175, "🌐 GitHub: github.com/Almerek999/Sanau.AI")
-    c.drawString(right_x + 25, 150, "📍 г. Тараз, Казахстан")
+    c.drawString(right_x + 175, 335, "• Приемка по фото")
+    c.drawString(right_x + 175, 315, "• Голос KZ / RU")
+    c.drawString(right_x + 175, 295, "• Радар маржи")
+    c.drawString(right_x + 175, 275, "• Доступ 24/7")
+
+    # Контакты внизу карточки
+    draw_card(c, right_x + 20, 125, right_w - 40, 95, bg_color=colors.HexColor("#111e33"))
+    c.setFont("Arial-Bold", 11)
+    c.setFillColor(TEXT_WHITE)
+    c.drawString(right_x + 35, 195, "Контакты и ресурсы:")
+    c.setFont("Arial", 9.5)
+    c.setFillColor(TEXT_MUTED)
+    c.drawString(right_x + 35, 175, "🤖 Бот: @Sanau_AI_bot")
+    c.drawString(right_x + 35, 155, "🌐 GitHub: github.com/Almerek999/Sanau.AI")
+    c.drawString(right_x + 35, 135, "📍 г. Тараз, Казахстан")
 
 def generate_pdf(output_path="presentation_pitch_deck.pdf"):
     c = canvas.Canvas(output_path, pagesize=landscape(letter))
