@@ -2,32 +2,50 @@ from typing import Dict, Any, List
 from database.db import get_connection
 
 def find_existing_product(name: str):
-    """Поиск товара в каталоге с нечетким сопоставлением"""
+    """Поиск товара в каталоге с нечетким сопоставлением (поддержка русского, казахского и латиницы)"""
     if not name or not isinstance(name, str):
         return None
     name_str = name.strip()
     if not name_str:
         return None
+        
     conn = get_connection()
     cursor = conn.cursor()
-    
-    # 1. Точное совпадение
-    cursor.execute("SELECT * FROM products WHERE LOWER(name) = LOWER(?)", (name_str,))
-    row = cursor.fetchone()
-    if row:
-        conn.close()
-        return dict(row)
-        
-    # 2. Поиск по ключевым словам (например 'Родина', 'Цесна', 'Шедевр')
-    tokens = [t.lower() for t in name.replace("'", "").replace('"', '').split() if len(t) > 3]
-    for token in tokens:
-        cursor.execute("SELECT * FROM products WHERE LOWER(name) LIKE ?", (f"%{token}%",))
-        candidate = cursor.fetchone()
-        if candidate:
-            conn.close()
-            return dict(candidate)
-            
+    cursor.execute("SELECT * FROM products")
+    all_prods = [dict(r) for r in cursor.fetchall()]
     conn.close()
+    
+    clean_target = name_str.lower().replace("'", "").replace('"', '').strip()
+    
+    # 1. Точное совпадение (без кавычек и регистра)
+    for p in all_prods:
+        p_clean = p["name"].lower().replace("'", "").replace('"', '').strip()
+        if p_clean == clean_target:
+            return p
+            
+    # 2. Вхождение подстроки
+    for p in all_prods:
+        p_clean = p["name"].lower().replace("'", "").replace('"', '').strip()
+        if clean_target in p_clean or p_clean in clean_target:
+            return p
+            
+    # 3. Совпадение по ключевым словам бренда/продукта
+    stop_words = {"пачка", "коробка", "штук", "дана", "литр", "килограмм", "закуп", "товар", "пакет", "бутылка"}
+    target_tokens = [t for t in clean_target.split() if len(t) >= 3 and t not in stop_words]
+    
+    best_match = None
+    max_common = 0
+    
+    for p in all_prods:
+        p_tokens = set(t for t in p["name"].lower().replace("'", "").replace('"', '').split() if len(t) >= 3)
+        common = sum(1 for t in target_tokens if any(t in pt or pt in t for pt in p_tokens))
+        if common > max_common:
+            max_common = common
+            best_match = p
+            
+    if max_common >= 1:
+        return best_match
+        
     return None
 
 def to_float(val: Any, default: float = 0.0) -> float:
@@ -151,5 +169,6 @@ def analyze_invoice_pricing(raw_invoice: Dict[str, Any]) -> Dict[str, Any]:
         "supplier_stability_score": stability_score,
         "source_type": str(raw_invoice.get("source_type") or "photo"),
         "transcription": str(raw_invoice.get("transcription") or ""),
-        "note": str(raw_invoice.get("note") or "")
+        "note": str(raw_invoice.get("note") or ""),
+        "error": raw_invoice.get("error", None)
     }

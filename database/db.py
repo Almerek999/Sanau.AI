@@ -7,6 +7,7 @@ def get_connection():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
+    conn.create_function("lower", 1, lambda s: s.lower() if s else "")
     return conn
 
 def init_db():

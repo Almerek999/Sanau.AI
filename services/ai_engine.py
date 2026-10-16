@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import base64
 import requests
@@ -435,7 +436,100 @@ def get_demo_sample_invoice(sample_id: str = "spike_milk_flour") -> Dict[str, An
         }
 
 # =========================================================================
-# ЕДИНАЯ ТОЧКА ВХОДА (С АВТО-ВЫБОРОМ OPENAI / GEMINI / DEMO)
+# ЛОКАЛЬНЫЙ NLP / REGEX ПАРСЕР ТЕКСТА (КАЗАХСКИЙ И РУССКИЙ ЯЗЫКИ)
+# =========================================================================
+def parse_text_locally(text: str) -> Optional[Dict[str, Any]]:
+    """
+    Извлечение номенклатуры из текста без обращения к внешним LLM.
+    Поддерживает казахские и русские шаблоны закупа:
+    - 'Молоко Родина 25 шт по 440 тг'
+    - '20 сүт 440 теңгеден'
+    - '15 қап ұн 8500-ден'
+    - 'Мука Цесна 10 кг 760'
+    """
+    if not text or not text.strip():
+        return None
+        
+    lines = [l.strip() for l in re.split(r'[\n;,]+', text) if l.strip()]
+    items = []
+    
+    unit_re = r'(?:шт|кг|л|литр|пачка|пач|кор|коробка|қап|бөтелке|бут|дана|порция|банка)'
+    
+    for line in lines:
+        cleaned = re.sub(r'^(купил|привезли|принял|поступило|келді|алдық|закуп|товар|по)\s*', '', line, flags=re.IGNORECASE).strip()
+        if not cleaned or len(cleaned) < 2:
+            continue
+            
+        matched = False
+        
+        # Если строка начинается с цифры: '20 сүт 440 теңгеден' или '15 қап ұн 8500'
+        if re.match(r'^\d', cleaned):
+            m2 = re.search(r'^(\d+(?:[.,]\d+)?)\s*(?:(' + unit_re + r')\s+)?(.*?)\s+(?:по|-нен|-тен|-дан|-ден)?\s*(\d+(?:[.,]\d+)?)\s*(?:тг|тенге|теңге|теңгеден|ден|нен|тен|₸|kzt)?$', cleaned, re.IGNORECASE)
+            if m2:
+                q = float(m2.group(1).replace(',', '.'))
+                u = m2.group(2) or 'шт'
+                n = m2.group(3).strip()
+                p = float(m2.group(4).replace(',', '.'))
+                if n:
+                    items.append({
+                        "product_name": n,
+                        "category": "Продукты",
+                        "quantity": q,
+                        "unit": u,
+                        "purchase_price": p,
+                        "total_price": q * p
+                    })
+                    matched = True
+                    
+        # Иначе: 'Молоко Родина 25 шт по 440 тг' или 'Мука 10 кг 760'
+        if not matched:
+            m1 = re.search(r'^(.*?)\s+[-:]?\s*(\d+(?:[.,]\d+)?)\s*(?:(' + unit_re + r')\s*)?(?:по|-нен|-тен|-дан|-ден)?\s*(\d+(?:[.,]\d+)?)\s*(?:тг|тенге|теңге|теңгеден|ден|нен|тен|₸|kzt)?$', cleaned, re.IGNORECASE)
+            if m1 and not m1.group(1).strip().isdigit():
+                n = m1.group(1).strip()
+                q = float(m1.group(2).replace(',', '.'))
+                u = m1.group(3) or 'шт'
+                p = float(m1.group(4).replace(',', '.'))
+                if n:
+                    items.append({
+                        "product_name": n,
+                        "category": "Продукты",
+                        "quantity": q,
+                        "unit": u,
+                        "purchase_price": p,
+                        "total_price": q * p
+                    })
+                    matched = True
+                    
+        # Fallback на случай свободной фразы: найти числа и слова
+        if not matched:
+            nums = re.findall(r'\b\d+(?:[.,]\d+)?\b', cleaned)
+            if len(nums) >= 2:
+                q = float(nums[0].replace(',', '.'))
+                p = float(nums[1].replace(',', '.'))
+                n = re.sub(r'\b\d+(?:[.,]\d+)?\b', '', cleaned)
+                n = re.sub(r'\b(шт|кг|л|литр|по|тг|тенге|теңге|теңгеден|ден|нен|тен|₸|дана|қап)\b', '', n, flags=re.IGNORECASE).strip()
+                if n:
+                    items.append({
+                        "product_name": n,
+                        "category": "Продукты",
+                        "quantity": q,
+                        "unit": "шт",
+                        "purchase_price": p,
+                        "total_price": q * p
+                    })
+                    
+    if items:
+        return {
+            "invoice_number": "Закуп-Текст",
+            "supplier_name": "Поставщик (ручной ввод)",
+            "date": "Сегодня",
+            "source_type": "local_nlp_text",
+            "items": items
+        }
+    return None
+
+# =========================================================================
+# ЕДИНАЯ ТОЧКА ВХОДА (РЕАЛЬНАЯ ОБРАБОТКА БЕЗ СУРРОГАТОВ И ФЕЙКОВЫХ ЗАГЛУШЕК)
 # =========================================================================
 def process_invoice(
     image_bytes: Optional[bytes] = None,
@@ -450,16 +544,21 @@ def process_invoice(
     gemini_key = get_active_gemini_key(api_key if not api_key.startswith("sk-") else "")
     
     if image_bytes:
-        # 1. Попытка через OpenAI (если настроен)
+        # 1. Попытка через OpenAI GPT-4o-mini Vision
         if openai_key:
             raw_data = parse_invoice_with_openai(image_bytes, openai_key)
-        # 2. Попытка через Gemini
+        # 2. Попытка через Gemini Vision
         if not raw_data and gemini_key:
             raw_data = parse_invoice_with_gemini(image_bytes, gemini_key)
-        # 3. Fallback на демо-образец для 100% надежности
-        if not raw_data:
-            raw_data = get_demo_sample_invoice("spike_milk_flour")
-            raw_data["note"] = "Обработано через встроенный офлайн-движок (демо-режим)"
+        # При сбое НЕ подменяем на фейковые товары — честно сообщаем об ошибке
+        if not raw_data or not raw_data.get("items"):
+            return {
+                "status": "error",
+                "error": "Не удалось распознать фото накладной. Убедитесь, что текст четкий и хорошо освещен, либо отправьте позиции текстом.",
+                "items": [],
+                "source_type": "photo_error"
+            }
+            
     elif audio_bytes:
         # 1. Попытка через OpenAI Whisper + GPT-4o-mini
         if openai_key:
@@ -467,22 +566,42 @@ def process_invoice(
         # 2. Попытка через Gemini Audio
         if not raw_data and gemini_key:
             raw_data = parse_voice_audio_bytes_with_gemini(audio_bytes, audio_mime, gemini_key)
-        # 3. Fallback
-        if not raw_data:
-            raw_data = get_demo_sample_invoice("kazakh_voice")
-            raw_data["note"] = "Обработано через встроенный офлайн-движок"
+        # При сбое НЕ подменяем на фейк
+        if not raw_data or not raw_data.get("items"):
+            return {
+                "status": "error",
+                "error": "Не удалось распознать аудиосообщение. Пожалуйста, повторите голосовое сообщение четче или отправьте текстом.",
+                "items": [],
+                "source_type": "audio_error"
+            }
+            
     elif voice_text:
+        # 1. Попытка через OpenAI GPT-4o-mini
         if openai_key:
             raw_data = parse_voice_text_with_openai(voice_text, openai_key)
+        # 2. Попытка через Gemini
         if not raw_data and gemini_key:
             raw_data = parse_voice_text_with_gemini(voice_text, gemini_key)
-        if not raw_data:
-            raw_data = get_demo_sample_invoice("kazakh_voice")
-            raw_data["note"] = "Обработано через встроенный офлайн-движок"
+        # 3. Локальный NLP парсер текста (Казахский и Русский)
+        if not raw_data or not raw_data.get("items"):
+            raw_data = parse_text_locally(voice_text)
+            
+        if not raw_data or not raw_data.get("items"):
+            return {
+                "status": "error",
+                "error": "Не удалось выделить товары из текста. Укажите название, количество и цену (например: «Кола 10 шт по 450 тг» или «20 сүт 440 теңгеден»).",
+                "items": [],
+                "source_type": "text_error"
+            }
+            
     elif sample_id:
         raw_data = get_demo_sample_invoice(sample_id)
     else:
-        raw_data = get_demo_sample_invoice("spike_milk_flour")
+        return {
+            "status": "error",
+            "error": "Нет данных для обработки. Отправьте фото, голос или текст.",
+            "items": []
+        }
         
     analyzed = analyze_invoice_pricing(raw_data)
     return analyzed

@@ -215,9 +215,9 @@ async def test_connector(req: Dict[str, str]):
 async def process_photo(file: UploadFile = File(...)):
     image_bytes = await file.read()
     analyzed = process_invoice(image_bytes=image_bytes)
-    # Автоматически сохраняем в локальную БД для немедленного отображения в каталоге
-    from services.connectors.sql_connector import SqlDatabaseConnector
-    SqlDatabaseConnector().sync_invoice(analyzed)
+    if analyzed.get("items") and not analyzed.get("error"):
+        from services.connectors.sql_connector import SqlDatabaseConnector
+        SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 @app.post("/api/process/voice")
@@ -225,8 +225,9 @@ async def process_voice(file: UploadFile = File(...)):
     audio_bytes = await file.read()
     mime = file.content_type or "audio/ogg"
     analyzed = process_invoice(audio_bytes=audio_bytes, audio_mime=mime)
-    from services.connectors.sql_connector import SqlDatabaseConnector
-    SqlDatabaseConnector().sync_invoice(analyzed)
+    if analyzed.get("items") and not analyzed.get("error"):
+        from services.connectors.sql_connector import SqlDatabaseConnector
+        SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 class TextPayload(BaseModel):
@@ -235,8 +236,9 @@ class TextPayload(BaseModel):
 @app.post("/api/process/text")
 async def process_text(payload: TextPayload):
     analyzed = process_invoice(voice_text=payload.text)
-    from services.connectors.sql_connector import SqlDatabaseConnector
-    SqlDatabaseConnector().sync_invoice(analyzed)
+    if analyzed.get("items") and not analyzed.get("error"):
+        from services.connectors.sql_connector import SqlDatabaseConnector
+        SqlDatabaseConnector().sync_invoice(analyzed)
     return analyzed
 
 class DemoPayload(BaseModel):

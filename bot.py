@@ -140,18 +140,15 @@ class TelegramBotWorker:
                 self._send_message(token, chat_id, info_msg)
                 return
 
-            if data == "demo_test":
-                inv = process_invoice(sample_id="spike_milk_flour")
-                self._send_invoice_report(token, chat_id, inv)
-            elif data == "demo_kazakh":
-                inv = process_invoice(sample_id="kazakh_voice")
-                self._send_invoice_report(token, chat_id, inv)
-            elif data == "edit_store":
+            if data == "edit_store":
                 curr_name = get_setting("store_name", "Магазин «Береке»")
                 self._send_message(token, chat_id, f"🏪 Текущее название: *{curr_name}*\n\nЧтобы изменить его, просто отправьте сообщение:\n`/store Новое Название`")
             elif data.startswith("sync_"):
                 inv_key = data.replace("sync_", "")
-                inv = cached_invoices.get(inv_key) or get_demo_sample_invoice("spike_milk_flour")
+                inv = cached_invoices.get(inv_key)
+                if not inv:
+                    self._send_message(token, chat_id, "⚠️ Данные накладной устарели или не найдены. Пожалуйста, выполните приемку заново.")
+                    return
                 
                 # Запускаем отправку по всем сервисам
                 manager = IntegrationManager()
@@ -238,10 +235,6 @@ class TelegramBotWorker:
                 "inline_keyboard": [
                     [self._make_webapp_button("📱 Открыть Sanau.AI Mini App")],
                     [
-                        {"text": "⚡ Тест для Жюри (Кейс: Рост цен)", "callback_data": "demo_test"},
-                        {"text": "🇰🇿 Голос (Казахский образец)", "callback_data": "demo_kazakh"}
-                    ],
-                    [
                         {"text": "🏪 Сменить магазин (/store)", "callback_data": "edit_store"},
                         {"text": "⚙️ Связать сервисы", "callback_data": "connect"}
                     ]
@@ -296,6 +289,20 @@ class TelegramBotWorker:
             self._send_invoice_report(token, chat_id, inv)
 
     def _send_invoice_report(self, token: str, chat_id: int, inv: Dict[str, Any]):
+        # Проверка на ошибку или пустой результат
+        if inv.get("status") == "error" or inv.get("error") or not inv.get("items"):
+            err_msg = inv.get("error") or "Не удалось выделить позиции товара."
+            help_text = (
+                f"❌ *Ошибка обработки:* {err_msg}\n\n"
+                "💡 *Как правильно отправить данные товароведу:*\n"
+                "• 🇷🇺 *Текстом:* _«Молоко Родина 20 шт по 440 тг, Мука Цесна 10 кг 760»_\n"
+                "• 🇰🇿 *Қазақша:* _«20 сүт 440 теңгеден, 15 қап ұн 8500-ден»_\n"
+                "• 📸 *Фото:* четкое фото накладной, счета-фактуры или чека\n"
+                "• 🎙️ *Голос:* четко назовите количество, товар и цену закупки"
+            )
+            self._send_message(token, chat_id, help_text)
+            return
+
         webapp_url = self.get_webapp_url()
         inv_num = inv.get("invoice_number", "б/н")
         cached_invoices[str(inv_num)] = inv
