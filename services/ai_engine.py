@@ -51,6 +51,7 @@ VOICE_PARSE_PROMPT = """
   "invoice_number": "Голосовая-приемка",
   "supplier_name": "Название поставщика или 'Локальный закуп Тараз'",
   "date": "Сегодня",
+  "transcription": "Дословный распознанный текст сказанной речи",
   "items": [
     {
       "product_name": "Название товара",
@@ -157,7 +158,7 @@ def parse_voice_audio_bytes_with_openai(audio_bytes: bytes, mime_type: str = "au
             "file": (f"audio.{ext}", io.BytesIO(audio_bytes), mime_type),
             "model": (None, "whisper-1")
         }
-        resp = requests.post(url_whisper, headers=headers, files=files, timeout=25)
+        resp = requests.post(url_whisper, headers=headers, files=files, timeout=45)
         if resp.status_code == 401:
             print("OpenAI Whisper Error: 401 Unauthorized (Invalid API Key)")
             return {"error": "API-ключ OpenAI недействителен (401 Unauthorized). Обновите ключ в настройках Mini App или отправьте накладную текстом."}
@@ -202,7 +203,7 @@ def parse_voice_text_with_openai(text_input: str, api_key: str = "") -> Optional
             "response_format": {"type": "json_object"},
             "temperature": 0.1
         }
-        resp = requests.post(url, json=payload, headers=headers, timeout=15)
+        resp = requests.post(url, json=payload, headers=headers, timeout=30)
         if resp.status_code == 200:
             content = resp.json()["choices"][0]["message"]["content"]
             data = json.loads(clean_json_response(content))

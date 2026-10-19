@@ -312,7 +312,7 @@ class TelegramBotWorker:
                     self._send_message(token, chat_id, f"❌ Ошибка Telegram при получении файла: {f_json.get('description', 'Файл недоступен')}")
                     return
                 file_path = f_json["result"]["file_path"]
-                audio_bytes = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=25).content
+                audio_bytes = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=35).content
                 
                 inv = process_invoice(audio_bytes=audio_bytes, audio_mime="audio/ogg")
                 self._send_invoice_report(token, chat_id, inv)
