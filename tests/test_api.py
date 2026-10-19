@@ -97,6 +97,19 @@ def test_presentation_endpoints():
     assert resp_pdf.headers["content-type"] == "application/pdf"
     assert len(resp_pdf.content) > 10000
 
+def test_invoices_endpoints():
+    # Проверка отдачи HTML накладных
+    resp_html = client.get("/invoices")
+    assert resp_html.status_code == 200
+    assert "Форма З-2" in resp_html.text
+    assert "Т-4819" in resp_html.text
+    
+    # Проверка отдачи PDF накладных
+    resp_pdf = client.get("/invoices_for_jury_demo.pdf")
+    assert resp_pdf.status_code == 200
+    assert resp_pdf.headers["content-type"] == "application/pdf"
+    assert len(resp_pdf.content) > 10000
+
 if __name__ == "__main__":
     test_root_serves_miniapp()
     test_settings_flow()
@@ -106,4 +119,5 @@ if __name__ == "__main__":
     test_export_endpoints()
     test_catalog_deletion_and_clear()
     test_presentation_endpoints()
+    test_invoices_endpoints()
     print("ALL API AND MINI APP TESTS PASSED SUCCESSFULLY! 🚀")

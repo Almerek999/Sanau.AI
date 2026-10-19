@@ -109,6 +109,33 @@ async def serve_presentation_pdf():
         filename="Sanau_AI_Pitch_Deck.pdf"
     )
 
+@app.get("/invoices", response_class=HTMLResponse)
+@app.get("/print_invoices", response_class=HTMLResponse)
+@app.get("/demo_invoices", response_class=HTMLResponse)
+async def serve_invoices_page():
+    invoices_html = STATIC_DIR / "print_invoices.html"
+    if invoices_html.exists():
+        return HTMLResponse(content=invoices_html.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Образцы накладных Sanau.AI загружаются...</h1>")
+
+@app.get("/invoices_for_jury_demo.pdf")
+@app.get("/invoices.pdf")
+@app.get("/api/export/invoices")
+async def serve_invoices_pdf():
+    pdf_file = Path(__file__).resolve().parent / "invoices_for_jury_demo.pdf"
+    if not pdf_file.exists():
+        try:
+            from generate_printable_invoices_pdf import generate_all_invoices
+            generate_all_invoices(str(pdf_file))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Ошибка генерации PDF: {e}")
+            
+    return FileResponse(
+        path=str(pdf_file),
+        media_type="application/pdf",
+        filename="Sanau_AI_Demo_Invoices_Taraz.pdf"
+    )
+
 # ----------------- ПРОФИЛЬ МАГАЗИНА И НАСТРОЙКИ -----------------
 class StoreProfilePayload(BaseModel):
     name: Optional[str] = "Магазин «Береке»"

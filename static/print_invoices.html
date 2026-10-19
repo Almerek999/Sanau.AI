@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Образцы накладных для демо Sanau.AI | Форма З-2 РК</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Стили для экранного просмотра документов */
+    .sheet-wrapper {
+      background: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      width: 210mm;
+      min-height: 297mm;
+      padding: 12mm 14mm;
+      margin: 0 auto 30px auto;
+      box-sizing: border-box;
+      position: relative;
+      color: #0f172a;
+    }
+
+    /* Настройки прямой печати (A4) */
+    @page {
+      size: A4 portrait;
+      margin: 8mm 10mm;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .sheet-wrapper {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 4mm 6mm !important;
+        width: 100% !important;
+        min-height: 0 !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .sheet-wrapper:last-of-type {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+      /* Печатаем фоновые цвета и границы */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    .table-bordered {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .table-bordered th, 
+    .table-bordered td {
+      border: 1px solid #94a3b8;
+    }
+
+    /* Круглая печать */
+    .stamp-round {
+      width: 90px;
+      height: 90px;
+      border: 2px dashed #1d4ed8;
+      border-radius: 50%;
+      color: #1d4ed8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transform: rotate(-8deg);
+      user-select: none;
+      font-size: 8px;
+      font-weight: 700;
+      line-height: 1.1;
+      padding: 4px;
+      background: rgba(29, 78, 216, 0.03);
+    }
+
+    /* Прямоугольный штамп */
+    .stamp-rect {
+      border: 2px solid #0f766e;
+      border-radius: 6px;
+      color: #0f766e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transform: rotate(3deg);
+      user-select: none;
+      font-size: 8px;
+      font-weight: 700;
+      line-height: 1.2;
+      padding: 6px 12px;
+      background: rgba(15, 118, 110, 0.03);
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+  <!-- ================= ВЕРХНЯЯ ПАНЕЛЬ УПРАВЛЕНИЯ (ТОЛЬКО НА ЭКРАНЕ) ================= -->
+  <header class="no-print sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-xl">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/30">
+          S
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-white text-base tracking-tight">Sanau.AI</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Образцы для демо</span>
+          </div>
+          <p class="text-xs text-slate-400">Форма З-2 МФ РК • 3 готовых тестовых сценария для жюри</p>
+        </div>
+      </div>
+
+      <!-- Кнопки действий -->
+      <div class="flex items-center flex-wrap gap-2">
+        <a href="#speaker-guide" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Шпаргалка спикера</span>
+        </a>
+
+        <a href="/invoices_for_jury_demo.pdf" download="Sanau_AI_Demo_Invoices_Taraz.pdf" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/30 active:scale-95 transition">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Скачать PDF (A4)</span>
+        </a>
+
+        <button onclick="window.print()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-indigo-600/30 active:scale-95 transition">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Печать (Ctrl+P)</span>
+        </button>
+
+        <a href="/presentation" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+          <i data-lucide="presentation" class="w-4 h-4"></i>
+          <span>Презентация</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Информационная плашка для спикера -->
+  <div class="no-print max-w-5xl mx-auto mt-6 px-4">
+    <div class="bg-gradient-to-r from-amber-950/40 via-amber-900/20 to-slate-900 border border-amber-500/40 rounded-xl p-4 flex items-start gap-3 shadow-lg">
+      <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+      </div>
+      <div class="text-xs text-slate-300 leading-relaxed">
+        <strong class="text-amber-300 text-sm block mb-1">Как использовать накладные завтра на защите перед жюри:</strong>
+        Распечатайте этот файл на обычном принтере (или нажмите зеленую кнопку «Скачать PDF»). 
+        Возьмите 3 листа с собой на сцену. На слайде №4 презентации сфотографируйте <strong>Накладную №1</strong> на камеру телефона через Telegram-бота Sanau.AI — система моментально выдаст <strong>Красный экран</strong> с потерей маржи в 4 000 ₸. Жюри увидит работу живой технологии на физическом носителе!
+      </div>
+    </div>
+  </div>
+
+  <main class="py-8 px-2 sm:px-4">
+
+    <!-- ========================================================================= -->
+    <!-- ЛИСТ 1: КЕЙС №1 (ГЛАВНЫЙ ШОК-КЕЙС: СКРЫТЫЙ РОСТ ЦЕН НА МОЛОКО И МУКУ)    -->
+    <!-- ========================================================================= -->
+    <div class="sheet-wrapper text-slate-900" id="case-1">
+      <!-- Баннер-подсказка для выступающего -->
+      <div class="mb-3 px-3 py-2 rounded-md bg-red-50 border border-red-300 flex items-center justify-between text-xs font-semibold text-red-900">
+        <div class="flex items-center gap-2">
+          <span class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded">КЕЙС 1: РОСТ ЦЕН</span>
+          <span>Поставщик поднял цены на Молоко (450 тг вместо 390) и Муку (790 тг вместо 680). Радар покажет потерю 4 000 ₸ маржи!</span>
+        </div>
+        <span class="text-[10px] text-red-600 font-mono hidden sm:inline">Лист 1 из 3</span>
+      </div>
+
+      <!-- Официальная шапка МФ РК -->
+      <div class="text-right text-[10px] text-slate-500 leading-tight mb-2">
+        Приложение 26 к приказу Министра финансов РК от 20.12.2012 г. № 562<br>
+        <strong class="text-slate-700">Форма З-2 (код по ОКУД: 0503102)</strong>
+      </div>
+
+      <!-- Реквизиты сторон -->
+      <div class="border-t border-b border-slate-300 py-2.5 my-2 grid grid-cols-2 gap-4 text-xs">
+        <div>
+          <div class="font-bold text-slate-900 mb-0.5">Организация-отправитель (Поставщик):</div>
+          <div class="font-semibold text-slate-800">ТОО «Прима Дистрибьюшн Тараз»</div>
+          <div class="text-slate-600 text-[11px]">БИН: 120440019283 • Тел: +7 (7262) 43-21-90</div>
+          <div class="text-slate-600 text-[11px]">Адрес склада: г. Тараз, Промзона, ул. Желтоксан 140</div>
+        </div>
+        <div>
+          <div class="font-bold text-slate-900 mb-0.5">Организация-получатель (Покупатель):</div>
+          <div class="font-semibold text-slate-800">ИП «Магазин Береке» (Тараз)</div>
+          <div class="text-slate-600 text-[11px]">ИИН: 880512301948 • Торговая точка: Магазин «Береке» (у дома)</div>
+          <div class="text-slate-600 text-[11px]">Пункт разгрузки: г. Тараз, 1-й микрорайон, д. 14Б</div>
+        </div>
+      </div>
+
+      <!-- Название накладной -->
+      <div class="text-center my-3">
+        <h1 class="text-base font-extrabold tracking-tight text-slate-900 uppercase">
+          Накладная на отпуск запасов на сторону № Т-4819
+        </h1>
+        <p class="text-xs text-slate-600 mt-0.5">
+          от «20 октября 2026» года &nbsp;•&nbsp; Договор поставки: Договор дистрибьюции № 14-П от 12.01.2026
+        </p>
+      </div>
+
+      <!-- Таблица товаров -->
+      <table class="table-bordered text-xs mt-3 mb-2">
+        <thead class="bg-slate-100 text-slate-800 text-[11px] font-bold">
+          <tr>
+            <th class="py-1.5 px-2 text-center w-8">№</th>
+            <th class="py-1.5 px-3 text-left">Наименование товара, характеристика</th>
+            <th class="py-1.5 px-2 text-center w-12">Ед.</th>
+            <th class="py-1.5 px-3 text-right w-16">Отпущено</th>
+            <th class="py-1.5 px-3 text-right w-20">Цена, ₸</th>
+            <th class="py-1.5 px-3 text-right w-24">Сумма, ₸</th>
+            <th class="py-1.5 px-3 text-left w-36">Статус контроля</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr class="bg-red-50/50">
+            <td class="py-1.5 px-2 text-center text-slate-500">1</td>
+            <td class="py-1.5 px-3 font-bold text-slate-900">Молоко 'Родина' 3.2% 1л</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">30</td>
+            <td class="py-1.5 px-3 text-right font-bold text-red-700">450</td>
+            <td class="py-1.5 px-3 text-right font-bold">13 500</td>
+            <td class="py-1.5 px-3 text-[10px] font-bold text-red-600">⚠ РОСТ ЦЕНЫ (+15.4%)</td>
+          </tr>
+          <tr class="bg-red-50/50">
+            <td class="py-1.5 px-2 text-center text-slate-500">2</td>
+            <td class="py-1.5 px-3 font-bold text-slate-900">Мука пшеничная 'Цесна' 1-сорт 2кг</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">20</td>
+            <td class="py-1.5 px-3 text-right font-bold text-red-700">790</td>
+            <td class="py-1.5 px-3 text-right font-bold">15 800</td>
+            <td class="py-1.5 px-3 text-[10px] font-bold text-red-600">⚠ РОСТ ЦЕНЫ (+16.2%)</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 px-2 text-center text-slate-500">3</td>
+            <td class="py-1.5 px-3 text-slate-800">Чай черный 'Пиала Gold' 250г</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">15</td>
+            <td class="py-1.5 px-3 text-right">950</td>
+            <td class="py-1.5 px-3 text-right font-bold">14 250</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ По контракту</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 px-2 text-center text-slate-500">4</td>
+            <td class="py-1.5 px-3 text-slate-800">Макароны 'Султан' Спагетти 400г</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">25</td>
+            <td class="py-1.5 px-3 text-right">320</td>
+            <td class="py-1.5 px-3 text-right font-bold">8 000</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ По контракту</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 px-2 text-center text-slate-500">5</td>
+            <td class="py-1.5 px-3 text-slate-800">Вода 'Tassay' негазированная 1.5л</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">24</td>
+            <td class="py-1.5 px-3 text-right">170</td>
+            <td class="py-1.5 px-3 text-right font-bold">4 080</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ По контракту</td>
+          </tr>
+        </tbody>
+        <tfoot class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-400">
+          <tr>
+            <td colspan="3" class="py-2 px-3 text-right">ИТОГО ПО НАКЛАДНОЙ:</td>
+            <td class="py-2 px-3 text-right">114</td>
+            <td class="py-2 px-3 text-right">—</td>
+            <td class="py-2 px-3 text-right text-sm font-black text-indigo-900">55 630 ₸</td>
+            <td class="py-2 px-3 text-[10px] text-red-600 font-bold">Ущерб: -4 000 ₸</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Прописью -->
+      <div class="text-[11px] text-slate-700 mb-6 italic">
+        Всего наименований: 5, на общую сумму: 55 630 тенге (Пятьдесят пять тысяч шестьсот тридцать тенге, НДС 12% включен).
+      </div>
+
+      <!-- Подписи и печати -->
+      <div class="grid grid-cols-2 gap-8 text-xs mt-6 pt-4 border-t border-slate-300">
+        <div>
+          <div class="mb-4">
+            <span class="font-bold">Отпуск груза разрешил:</span>
+            <div class="border-b border-slate-500 inline-block w-48 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(подпись / Ф.И.О.)</span>
+          </div>
+          <div class="mb-4">
+            <span class="font-bold">Отпустил экспедитор:</span>
+            <div class="border-b border-slate-500 inline-block w-48 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(подпись / Ф.И.О.)</span>
+          </div>
+
+          <!-- Круглая печать -->
+          <div class="mt-2 ml-16 stamp-round">
+            ТОО «ПРИМА ДИСТРИБЬЮШН»<br>
+            <span class="text-[11px] font-black my-0.5">М. П.</span>
+            ДЛЯ НАКЛАДНЫХ<br>
+            г. ТАРАЗ
+          </div>
+        </div>
+
+        <div>
+          <div class="mb-4">
+            <span class="font-bold">По доверенности №:</span>
+            <span class="border-b border-slate-500 inline-block w-48 ml-2 text-center font-medium">Разовое поручение</span>
+          </div>
+          <div class="mb-4">
+            <span class="font-bold">Запасы принял товаровед:</span>
+            <div class="border-b border-slate-500 inline-block w-40 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-48">(Магазин «Береке»)</span>
+          </div>
+
+          <!-- Штамп магазина -->
+          <div class="mt-2 ml-16 stamp-rect">
+            ИП МАГАЗИН «БЕРЕКЕ» (ТАРАЗ)<br>
+            ГРУЗ ПРИНЯТ БЕЗ ПРЕТЕНЗИЙ<br>
+            <span class="text-[9px] font-normal mt-0.5">Дата: 20 октября 2026 г.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Нижний колонтитул -->
+      <div class="absolute bottom-3 left-14 right-14 border-t border-slate-300 pt-1.5 flex justify-between text-[9px] text-slate-400 font-mono">
+        <span>Документ сформирован для демонстрации работы системы Sanau.AI на защите хакатона.</span>
+        <span>Штрихкод: *Т-4819*</span>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- ЛИСТ 2: КЕЙС №2 (МУЛЬТИЯЗЫЧНОСТЬ / ҚАЗАҚША — ОПТОВИК АУЛИЕ-АТА)          -->
+    <!-- ========================================================================= -->
+    <div class="sheet-wrapper text-slate-900" id="case-2">
+      <!-- Баннер-подсказка для выступающего -->
+      <div class="mb-3 px-3 py-2 rounded-md bg-sky-50 border border-sky-300 flex items-center justify-between text-xs font-semibold text-sky-900">
+        <div class="flex items-center gap-2">
+          <span class="bg-sky-600 text-white text-[10px] font-black px-2 py-0.5 rounded">КЕЙС 2: ҚАЗАҚША</span>
+          <span>Оптовик Сахпоселок («Аулие-Ата»). Казахский язык (құты, қап, дана) + подорожание масла Шедевр (840 тг вместо 750).</span>
+        </div>
+        <span class="text-[10px] text-sky-600 font-mono hidden sm:inline">Лист 2 из 3</span>
+      </div>
+
+      <!-- Официальная шапка МФ РК -->
+      <div class="text-right text-[10px] text-slate-500 leading-tight mb-2">
+        ҚР Қаржы министрінің 2012 жылғы 20 желтоқсандағы № 562 бұйрығына 26-қосымша<br>
+        <strong class="text-slate-700">З-2 нысаны (ОКУД бойынша коды: 0503102)</strong>
+      </div>
+
+      <!-- Реквизиты сторон -->
+      <div class="border-t border-b border-slate-300 py-2.5 my-2 grid grid-cols-2 gap-4 text-xs">
+        <div>
+          <div class="font-bold text-slate-900 mb-0.5">Жөнелтуші ұйым (Поставщик):</div>
+          <div class="font-semibold text-slate-800">ЖК «Ахметов Қ.С.» (Оптовый склад Аулие-Ата)</div>
+          <div class="text-slate-600 text-[11px]">ЖСН/БИН: 790815302194 • Тел: +7 (707) 999-88-77</div>
+          <div class="text-slate-600 text-[11px]">Қойма мекенжайы: Тараз қ., Сахпоселок, «Аулие-Ата» көтерме базары, 4-қойма</div>
+        </div>
+        <div>
+          <div class="font-bold text-slate-900 mb-0.5">Алушы ұйым (Покупатель):</div>
+          <div class="font-semibold text-slate-800">ЖК «Береке дүкені» (ИП Магазин Береке)</div>
+          <div class="text-slate-600 text-[11px]">ЖСН: 880512301948 • Сауда нүктесі: «Береке» дүкені</div>
+          <div class="text-slate-600 text-[11px]">Түсіру орны: Тараз қ., 1-мөлтекаудан, 14Б үй</div>
+        </div>
+      </div>
+
+      <!-- Название накладной -->
+      <div class="text-center my-3">
+        <h1 class="text-base font-extrabold tracking-tight text-slate-900 uppercase">
+          ТАУАРЛЫҚ ЖҮКҚҰЖАТ (НАКЛАДНАЯ) № АТА-104
+        </h1>
+        <p class="text-xs text-slate-600 mt-0.5">
+          «20 қазан 2026» жыл &nbsp;•&nbsp; Жеткізу шарты: Көтерме сату шарты № 88/А
+        </p>
+      </div>
+
+      <!-- Таблица товаров -->
+      <table class="table-bordered text-xs mt-3 mb-2">
+        <thead class="bg-slate-100 text-slate-800 text-[11px] font-bold">
+          <tr>
+            <th class="py-1.5 px-2 text-center w-8">№</th>
+            <th class="py-1.5 px-3 text-left">Тауар атауы, сипаттамасы</th>
+            <th class="py-1.5 px-2 text-center w-12">Өлш.</th>
+            <th class="py-1.5 px-3 text-right w-16">Босатылды</th>
+            <th class="py-1.5 px-3 text-right w-20">Бағасы, ₸</th>
+            <th class="py-1.5 px-3 text-right w-24">Сомасы, ₸</th>
+            <th class="py-1.5 px-3 text-left w-36">Бақылау күйі</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr class="bg-sky-50/50">
+            <td class="py-1.5 px-2 text-center text-slate-500">1</td>
+            <td class="py-1.5 px-3 font-bold text-slate-900">Күнбағыс майы 'Шедевр' 1л</td>
+            <td class="py-1.5 px-2 text-center">құты</td>
+            <td class="py-1.5 px-3 text-right font-medium">25</td>
+            <td class="py-1.5 px-3 text-right font-bold text-red-700">840</td>
+            <td class="py-1.5 px-3 text-right font-bold">21 000</td>
+            <td class="py-1.5 px-3 text-[10px] font-bold text-red-600">⚠ БАҒА ӨСУІ (+12.0%)</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 px-2 text-center text-slate-500">2</td>
+            <td class="py-1.5 px-3 text-slate-800">Қант құмы (Сахар песок) 1кг</td>
+            <td class="py-1.5 px-2 text-center">кг</td>
+            <td class="py-1.5 px-3 text-right font-medium">50</td>
+            <td class="py-1.5 px-3 text-right">410</td>
+            <td class="py-1.5 px-3 text-right font-bold">20 500</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ Келісімшартпен</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 px-2 text-center text-slate-500">3</td>
+            <td class="py-1.5 px-3 text-slate-800">Күріш 'Ақмаржан' (Рис) 1кг</td>
+            <td class="py-1.5 px-2 text-center">кг</td>
+            <td class="py-1.5 px-3 text-right font-medium">20</td>
+            <td class="py-1.5 px-3 text-right">520</td>
+            <td class="py-1.5 px-3 text-right font-bold">10 400</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ Келісімшартпен</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 px-2 text-center text-slate-500">4</td>
+            <td class="py-1.5 px-3 text-slate-800">Конфет 'Баян Сұлу' Қазақстандық</td>
+            <td class="py-1.5 px-2 text-center">кг</td>
+            <td class="py-1.5 px-3 text-right font-medium">10</td>
+            <td class="py-1.5 px-3 text-right">2 100</td>
+            <td class="py-1.5 px-3 text-right font-bold">21 000</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ Келісімшартпен</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 px-2 text-center text-slate-500">5</td>
+            <td class="py-1.5 px-3 text-slate-800">Шоколад 'Қазақстан' Рахат 100г</td>
+            <td class="py-1.5 px-2 text-center">дана</td>
+            <td class="py-1.5 px-3 text-right font-medium">30</td>
+            <td class="py-1.5 px-3 text-right">650</td>
+            <td class="py-1.5 px-3 text-right font-bold">19 500</td>
+            <td class="py-1.5 px-3 text-[10px] font-medium text-emerald-600">✓ Келісімшартпен</td>
+          </tr>
+        </tbody>
+        <tfoot class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-400">
+          <tr>
+            <td colspan="3" class="py-2 px-3 text-right">БАРЛЫҒЫ (ИТОГО):</td>
+            <td class="py-2 px-3 text-right">135</td>
+            <td class="py-2 px-3 text-right">—</td>
+            <td class="py-2 px-3 text-right text-sm font-black text-sky-950">92 400 ₸</td>
+            <td class="py-2 px-3 text-[10px] text-red-600 font-bold">Ущерб: -2 250 ₸</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Прописью -->
+      <div class="text-[11px] text-slate-700 mb-6 italic">
+        Барлық атаулар саны: 5, жалпы сомасы: 92 400 теңге (Тоқсан екі мың төрт жүз теңге).
+      </div>
+
+      <!-- Подписи и печати -->
+      <div class="grid grid-cols-2 gap-8 text-xs mt-6 pt-4 border-t border-slate-300">
+        <div>
+          <div class="mb-4">
+            <span class="font-bold">Жүкті босатуға рұқсат берді:</span>
+            <div class="border-b border-slate-500 inline-block w-40 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(қолы / Т.А.Ә.)</span>
+          </div>
+          <div class="mb-4">
+            <span class="font-bold">Босатқан экспедитор:</span>
+            <div class="border-b border-slate-500 inline-block w-44 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(қолы / Т.А.Ә.)</span>
+          </div>
+
+          <!-- Круглая печать -->
+          <div class="mt-2 ml-16 stamp-round border-sky-700 text-sky-700">
+            ЖК «АХМЕТОВ Қ.С.»<br>
+            <span class="text-[11px] font-black my-0.5">М. О.</span>
+            ТАУАРЛАР ҮШІН<br>
+            ТАРАЗ Қ. САХПОСЕЛОК
+          </div>
+        </div>
+
+        <div>
+          <div class="mb-4">
+            <span class="font-bold">Сенімхат бойынша №:</span>
+            <span class="border-b border-slate-500 inline-block w-44 ml-2 text-center font-medium">Біржолғы тапсырма</span>
+          </div>
+          <div class="mb-4">
+            <span class="font-bold">Қабылдаған тауартанушы:</span>
+            <div class="border-b border-slate-500 inline-block w-36 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(«Береке» дүкені)</span>
+          </div>
+
+          <!-- Штамп магазина -->
+          <div class="mt-2 ml-16 stamp-rect">
+            ЖК «БЕРЕКЕ ДҮКЕНІ»<br>
+            ТАУАР ШАҒЫМСЫЗ ҚАБЫЛДАНДЫ<br>
+            <span class="text-[9px] font-normal mt-0.5">Күні: 20 қазан 2026 ж.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Нижний колонтитул -->
+      <div class="absolute bottom-3 left-14 right-14 border-t border-slate-300 pt-1.5 flex justify-between text-[9px] text-slate-400 font-mono">
+        <span>Документ сформирован для демонстрации работы системы Sanau.AI на защите хакатона.</span>
+        <span>Штрихкод: *АТА-104*</span>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- ЛИСТ 3: КЕЙС №3 (ШТАТНАЯ НАКЛАДНАЯ: ЗЕЛЕНЫЙ КОРИДОР)                     -->
+    <!-- ========================================================================= -->
+    <div class="sheet-wrapper text-slate-900" id="case-3">
+      <!-- Баннер-подсказка для выступающего -->
+      <div class="mb-3 px-3 py-2 rounded-md bg-emerald-50 border border-emerald-300 flex items-center justify-between text-xs font-semibold text-emerald-900">
+        <div class="flex items-center gap-2">
+          <span class="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded">КЕЙС 3: ЗЕЛЕНЫЙ КОРИДОР</span>
+          <span>Штатная поставка RG Brands. Все цены строго по договору. Моментальное проведение в учетные системы!</span>
+        </div>
+        <span class="text-[10px] text-emerald-600 font-mono hidden sm:inline">Лист 3 из 3</span>
+      </div>
+
+      <!-- Официальная шапка МФ РК -->
+      <div class="text-right text-[10px] text-slate-500 leading-tight mb-2">
+        Приложение 26 к приказу Министра финансов РК от 20.12.2012 г. № 562<br>
+        <strong class="text-slate-700">Форма З-2 (код по ОКУД: 0503102)</strong>
+      </div>
+
+      <!-- Реквизиты сторон -->
+      <div class="border-t border-b border-slate-300 py-2.5 my-2 grid grid-cols-2 gap-4 text-xs">
+        <div>
+          <div class="font-bold text-slate-900 mb-0.5">Организация-отправитель (Поставщик):</div>
+          <div class="font-semibold text-slate-800">ТОО «RG Brands Тараз»</div>
+          <div class="text-slate-600 text-[11px]">БИН: 050240003192 • Тел: +7 (7262) 55-40-10</div>
+          <div class="text-slate-600 text-[11px]">Адрес склада: г. Тараз, ул. Сулейменова 22, логистический хаб</div>
+        </div>
+        <div>
+          <div class="font-bold text-slate-900 mb-0.5">Организация-получатель (Покупатель):</div>
+          <div class="font-semibold text-slate-800">ИП «Магазин Береке» (Тараз)</div>
+          <div class="text-slate-600 text-[11px]">ИИН: 880512301948 • Торговая точка: Магазин «Береке» (у дома)</div>
+          <div class="text-slate-600 text-[11px]">Пункт разгрузки: г. Тараз, 1-й микрорайон, д. 14Б</div>
+        </div>
+      </div>
+
+      <!-- Название накладной -->
+      <div class="text-center my-3">
+        <h1 class="text-base font-extrabold tracking-tight text-slate-900 uppercase">
+          Накладная на отпуск запасов на сторону № РГ-3022
+        </h1>
+        <p class="text-xs text-slate-600 mt-0.5">
+          от «20 октября 2026» года &nbsp;•&nbsp; Договор поставки: Генеральный контракт RG-Taraz № 05-24
+        </p>
+      </div>
+
+      <!-- Таблица товаров -->
+      <table class="table-bordered text-xs mt-3 mb-2">
+        <thead class="bg-slate-100 text-slate-800 text-[11px] font-bold">
+          <tr>
+            <th class="py-1.5 px-2 text-center w-8">№</th>
+            <th class="py-1.5 px-3 text-left">Наименование товара, характеристика</th>
+            <th class="py-1.5 px-2 text-center w-12">Ед.</th>
+            <th class="py-1.5 px-3 text-right w-16">Отпущено</th>
+            <th class="py-1.5 px-3 text-right w-20">Цена, ₸</th>
+            <th class="py-1.5 px-3 text-right w-24">Сумма, ₸</th>
+            <th class="py-1.5 px-3 text-left w-36">Статус контроля</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr>
+            <td class="py-1.5 px-2 text-center text-slate-500">1</td>
+            <td class="py-1.5 px-3 text-slate-800 font-medium">Вода 'Tassay' негазированная 1.5л</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">60</td>
+            <td class="py-1.5 px-3 text-right">170</td>
+            <td class="py-1.5 px-3 text-right font-bold">10 200</td>
+            <td class="py-1.5 px-3 text-[10px] font-semibold text-emerald-600">✓ По контракту</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 px-2 text-center text-slate-500">2</td>
+            <td class="py-1.5 px-3 text-slate-800 font-medium">Чай черный 'Пиала Gold' 250г</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">20</td>
+            <td class="py-1.5 px-3 text-right">950</td>
+            <td class="py-1.5 px-3 text-right font-bold">19 000</td>
+            <td class="py-1.5 px-3 text-[10px] font-semibold text-emerald-600">✓ По контракту</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 px-2 text-center text-slate-500">3</td>
+            <td class="py-1.5 px-3 text-slate-800 font-medium">Макароны 'Султан' Спагетти 400г</td>
+            <td class="py-1.5 px-2 text-center">шт</td>
+            <td class="py-1.5 px-3 text-right font-medium">30</td>
+            <td class="py-1.5 px-3 text-right">320</td>
+            <td class="py-1.5 px-3 text-right font-bold">9 600</td>
+            <td class="py-1.5 px-3 text-[10px] font-semibold text-emerald-600">✓ По контракту</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 px-2 text-center text-slate-500">4</td>
+            <td class="py-1.5 px-3 text-slate-800 font-medium">Рис 'Акмаржан' 1кг</td>
+            <td class="py-1.5 px-2 text-center">кг</td>
+            <td class="py-1.5 px-3 text-right font-medium">25</td>
+            <td class="py-1.5 px-3 text-right">520</td>
+            <td class="py-1.5 px-3 text-right font-bold">13 000</td>
+            <td class="py-1.5 px-3 text-[10px] font-semibold text-emerald-600">✓ По контракту</td>
+          </tr>
+        </tbody>
+        <tfoot class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-400">
+          <tr>
+            <td colspan="3" class="py-2 px-3 text-right">ИТОГО ПО НАКЛАДНОЙ:</td>
+            <td class="py-2 px-3 text-right">135</td>
+            <td class="py-2 px-3 text-right">—</td>
+            <td class="py-2 px-3 text-right text-sm font-black text-emerald-950">51 800 ₸</td>
+            <td class="py-2 px-3 text-[10px] text-emerald-700 font-bold">Отклонений: 0 ₸</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Прописью -->
+      <div class="text-[11px] text-slate-700 mb-6 italic">
+        Всего наименований: 4, на общую сумму: 51 800 тенге (Пятьдесят одна тысяча восемьсот тенге, НДС 12% включен).
+      </div>
+
+      <!-- Подписи и печати -->
+      <div class="grid grid-cols-2 gap-8 text-xs mt-6 pt-4 border-t border-slate-300">
+        <div>
+          <div class="mb-4">
+            <span class="font-bold">Отпуск груза разрешил:</span>
+            <div class="border-b border-slate-500 inline-block w-48 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(подпись / Ф.И.О.)</span>
+          </div>
+          <div class="mb-4">
+            <span class="font-bold">Отпустил экспедитор:</span>
+            <div class="border-b border-slate-500 inline-block w-48 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-44">(подпись / Ф.И.О.)</span>
+          </div>
+
+          <!-- Круглая печать -->
+          <div class="mt-2 ml-16 stamp-round border-emerald-700 text-emerald-700">
+            ТОО «RG BRANDS ТАРАЗ»<br>
+            <span class="text-[11px] font-black my-0.5">М. П.</span>
+            ЛОГИСТИЧЕСКИЙ ХАБ<br>
+            г. ТАРАЗ
+          </div>
+        </div>
+
+        <div>
+          <div class="mb-4">
+            <span class="font-bold">По доверенности №:</span>
+            <span class="border-b border-slate-500 inline-block w-48 ml-2 text-center font-medium">Разовое поручение</span>
+          </div>
+          <div class="mb-4">
+            <span class="font-bold">Запасы принял товаровед:</span>
+            <div class="border-b border-slate-500 inline-block w-40 ml-2"></div>
+            <span class="text-[9px] text-slate-500 block ml-48">(Магазин «Береке»)</span>
+          </div>
+
+          <!-- Штамп магазина -->
+          <div class="mt-2 ml-16 stamp-rect">
+            ИП МАГАЗИН «БЕРЕКЕ» (ТАРАЗ)<br>
+            ГРУЗ ПРИНЯТ БЕЗ ПРЕТЕНЗИЙ<br>
+            <span class="text-[9px] font-normal mt-0.5">Дата: 20 октября 2026 г.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Нижний колонтитул -->
+      <div class="absolute bottom-3 left-14 right-14 border-t border-slate-300 pt-1.5 flex justify-between text-[9px] text-slate-400 font-mono">
+        <span>Документ сформирован для демонстрации работы системы Sanau.AI на защите хакатона.</span>
+        <span>Штрихкод: *РГ-3022*</span>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- ПОШАГОВАЯ ШПАРГАЛКА СПИКЕРА ДЛЯ ВЫСТУПЛЕНИЯ ПЕРЕД ЖЮРИ (НЕ ПЕЧАТАЕТСЯ)    -->
+    <!-- ========================================================================= -->
+    <div class="no-print max-w-4xl mx-auto my-12 bg-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl" id="speaker-guide">
+      <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl">
+          🎯
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-white">Шпаргалка спикера: Живое демо на защите</h2>
+          <p class="text-xs text-slate-400">Сценарий выступления с распечатанными накладными в руках</p>
+        </div>
+      </div>
+
+      <div class="space-y-6 text-sm">
+        <!-- Шаг 1 -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex gap-4">
+          <div class="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-black flex items-center justify-center shrink-0">1</div>
+          <div>
+            <h4 class="font-bold text-white mb-1">Выход на сцену и физический артефакт</h4>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              Держите распечатанные накладные в руках. Скажите жюри:
+            </p>
+            <blockquote class="border-l-2 border-indigo-500 pl-3 my-2 text-indigo-300 italic text-xs">
+              «Уважаемое жюри! Вот эти бумажные накладные — это ежедневная боль 160 тысяч магазинов Казахстана. Каждый вечер хозяин магазина часами вбивает их в тетрадь, не замечая, как оптовики поднимают цены на 15–20%».
+            </blockquote>
+          </div>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="bg-slate-900/80 border border-red-900/30 rounded-xl p-4 flex gap-4">
+          <div class="w-8 h-8 rounded-full bg-red-500/20 text-red-400 font-black flex items-center justify-center shrink-0">2</div>
+          <div>
+            <h4 class="font-bold text-white mb-1">Кейс №1: Фотосъемка и Красный экран Радара</h4>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              Откройте на телефоне Telegram-бота Sanau.AI. Наведите камеру на <strong>Лист 1 (№ Т-4819)</strong> и отправьте фото в чат:
+            </p>
+            <blockquote class="border-l-2 border-red-500 pl-3 my-2 text-red-300 italic text-xs">
+              «Смотрите: я фотографирую накладную. Проходит 2.5 секунды. И Sanau.AI выдает КРАСНЫЙ АЛЕРТ: оптовик поднял цену на Молоко с 390 до 450 тенге и на Муку с 680 до 790 тенге. Прямо сейчас на этой одной поставке магазин потерял бы 4 000 тенге маржи. Но Sanau сразу предлагает новую розничную цену! В один клик мы спасаем прибыль».
+            </blockquote>
+          </div>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="bg-slate-900/80 border border-sky-900/30 rounded-xl p-4 flex gap-4">
+          <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-400 font-black flex items-center justify-center shrink-0">3</div>
+          <div>
+            <h4 class="font-bold text-white mb-1">Кейс №2: Национальная специфика и Казахский язык</h4>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              Покажите жюри <strong>Лист 2 (№ АТА-104)</strong> с оптового склада «Аулие-Ата» в Сахпоселке:
+            </p>
+            <blockquote class="border-l-2 border-sky-500 pl-3 my-2 text-sky-300 italic text-xs">
+              «Ни 1С, ни зарубежные сервисы не понимают специфику базаров Тараза. Sanau.AI распознает казахские термины: "құты", "қап", "дана", "күнбағыс майы" — и точно так же находит рост цен на масло "Шедевр"».
+            </blockquote>
+          </div>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div class="bg-slate-900/80 border border-emerald-900/30 rounded-xl p-4 flex gap-4">
+          <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 font-black flex items-center justify-center shrink-0">4</div>
+          <div>
+            <h4 class="font-bold text-white mb-1">Кейс №3: Зеленый коридор & Автоматическая синхронизация</h4>
+            <p class="text-slate-300 text-xs leading-relaxed">
+              Покажите экран Telegram Mini App или подключенную Google-таблицу:
+            </p>
+            <blockquote class="border-l-2 border-emerald-500 pl-3 my-2 text-emerald-300 italic text-xs">
+              «Когда цены в норме, как на накладной RG Brands, документ мгновенно разносится по позициям в Google Таблицу и 1C без участия человека. 0 ошибок, 0 потерянных часов».
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
