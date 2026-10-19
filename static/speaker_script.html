@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Шпаргалка спикера | Sanau.AI Pitch Deck</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .quote-box {
+      border-left: 3px solid #6366f1;
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.4) 100%);
+    }
+  </style>
+</head>
+<body class="bg-[#070b14] text-slate-100 min-h-screen pb-20 selection:bg-indigo-500 selection:text-white">
+
+  <!-- ================= TOP HEADER WITH LIVE TIMER ================= -->
+  <header class="sticky top-0 z-50 bg-[#0d1527]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 shadow-2xl">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/25">
+          🎤
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-extrabold text-white tracking-tight">Речь спикера Sanau.AI</h1>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Тайминг: 3:30</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Пошаговый сценарий выступления перед жюри</p>
+        </div>
+      </div>
+
+      <!-- Живой секундомер для тренировки питча -->
+      <div class="flex items-center gap-2">
+        <div class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1 flex items-center gap-2 font-mono text-sm font-black text-emerald-400 shadow-inner">
+          <i data-lucide="timer" class="w-4 h-4 text-emerald-400"></i>
+          <span id="timer-display">00:00</span>
+        </div>
+        <button onclick="toggleTimer()" id="timer-btn" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition active:scale-95 shadow">
+          Старт
+        </button>
+        <button onclick="resetTimer()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition active:scale-95" title="Сбросить таймер">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+        </button>
+        <a href="/presentation" class="hidden sm:flex px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold items-center gap-1 border border-slate-700 transition">
+          <i data-lucide="presentation" class="w-3.5 h-3.5"></i>
+          <span>Слайды</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ГЛАВНЫЙ КОНТЕНТ ================= -->
+  <main class="max-w-4xl mx-auto px-4 mt-6 space-y-6">
+
+    <!-- ПАМЯТКА РЕКВИЗИТА -->
+    <div class="bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-slate-900 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-xl">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 font-bold text-xl">
+          📦
+        </div>
+        <div class="text-xs text-slate-300 leading-relaxed">
+          <strong class="text-indigo-300 text-sm block mb-1">Реквизит спикера перед выходом на сцену:</strong>
+          В левой руке держите распечатанный <a href="/invoices_for_jury_demo.pdf" class="text-amber-400 underline font-bold" target="_blank">Лист №1 накладной (ТОО «Прима Дистрибьюшн»)</a>. 
+          В правой руке или кармане — смартфон с открытым ботом Sanau.AI на максимальной яркости экрана. Контраст между бумажным листом и моментальным красным алертом на экране смартфона — это главный эмоциональный триггер для первого места на хакатоне!
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 1 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 font-black text-sm flex items-center justify-center border border-indigo-500/30">1</span>
+          <h2 class="text-base font-bold text-white">Интро & Хук с QR-кодом</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">0:00 – 0:25</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">🎬 Что делать спикеру:</span>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Выходите уверенным шагом в центр. В руке накладные. Улыбка, контакт глазами с центром стола жюри. Показываете открытой ладонью на большой QR-код на экране.
+        </p>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Здравствуйте, уважаемые члены жюри и гости! Меня зовут <strong class="text-white">[Ваше Имя]</strong>, и наша команда представляет проект <strong>Sanau.AI</strong>.<br><br>
+          Перед тем как я перейду к слайдам — посмотрите на экран. Там QR-код. Достаньте свои смартфоны и <strong>отсканируйте его прямо сейчас</strong>. Потому что ровно через две минуты вы своими глазами увидите, как искусственный интеллект спасает деньги реального казахстанского бизнеса в прямом эфире!<br><br>
+          А вот этот невзрачный лист бумаги в моих руках — это причина, по которой прямо сейчас страдают более 160 тысяч предпринимателей по всей стране».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 2 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-red-500/20 text-red-400 font-black text-sm flex items-center justify-center border border-red-500/30">2</span>
+          <h2 class="text-base font-bold text-white">Боль: Ручной ад и скрытый рост цен</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">0:25 – 0:50</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">🎬 Что делать спикеру:</span>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Слегка встряхните пачку накладных. Интонация становится серьезной, доверительной. Делайте смысловой акцент на слове «в убыток».
+        </p>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Познакомьтесь с реальностью любого магазина у дома — будь то в Таразе, Шымкенте или Алматы. Каждое утро к магазину подъезжают пять грузовиков. Водители бросают на прилавок вот такие мятые накладные.<br><br>
+          Каждый вечер владелец тратит по три-четыре часа, перепечатывая эти строки в школьную тетрадь или Excel. Ошибки в артикулах, потерянные чеки, усталость.<br><br>
+          Но это лишь верхушка айсберга! <strong class="text-red-400">Главная беда — это скрытый рост оптовых цен.</strong> Оптовик молча поднял цену на молоко на 60 тенге, а на муку — на 110 тенге. Никто об этом не предупреждает! Продавец продает товар по старым ценникам и думает, что зарабатывает. А на самом деле каждый проданный пакет молока генерирует <strong class="text-red-300">чистый убыток</strong>! Владельцы теряют до 250 000 тенге маржи каждый месяц просто потому, что у них нет времени вручную сверять каждую строчку».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 3 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 font-black text-sm flex items-center justify-center border border-sky-500/30">3</span>
+          <h2 class="text-base font-bold text-white">Решение: Sanau.AI в Telegram</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">0:50 – 1:15</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">🎬 Что делать спикеру:</span>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Бумагу отведите в сторону, поднимите смартфон. Показывайте, что телефон заменяет компьютеры, кассы и сканеры.
+        </p>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Поэтому мы создали <strong>Sanau.AI</strong> — мультимодального ИИ-товароведа, который превращает этот трехчасовой ад в двухсекундное действие.<br><br>
+          Забудьте про покупку серверов, установку тяжелых программ и найм дорогих специалистов. Sanau.AI живет прямо в <strong>Telegram</strong> — приложении, которое уже установлено у каждого продавца в Казахстане.<br><br>
+          Владелец просто делает фотографию накладной или наговаривает голосовое сообщение на казахском языке. Наш ИИ на базе Gemini 2.5 Flash за <strong>две с половиной секунды</strong> оцифровывает документ, разносит позиции по учетным системам и мгновенно активирует <strong>Радар цен</strong>».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 4: КУЛЬМИНАЦИЯ -->
+    <!-- ========================================================================= -->
+    <div class="bg-gradient-to-b from-[#181124] to-[#0e1628] border-2 border-red-500/50 rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-red-500/30">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-red-600 text-white font-black text-sm flex items-center justify-center shadow-lg shadow-red-600/50">4</span>
+          <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+            <span>🔥 КУЛЬМИНАЦИЯ: Живое демо со сцены</span>
+            <span class="text-[10px] bg-red-500/30 text-red-300 px-2 py-0.5 rounded border border-red-500/40 uppercase">Главный шок-эффект</span>
+          </h2>
+        </div>
+        <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-800">1:15 – 1:55</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">🎬 Что делать спикеру:</span>
+        <p class="text-xs text-slate-300 leading-relaxed font-semibold">
+          Поднимите распечатанный Лист №1 (ТОО «Прима Дистрибьюшн Тараз»). Наведите камеру телефона, сфотографируйте и отправьте боту (или нажмите кнопку демо в презентации). На слайде загорается красный экран алерта!
+        </p>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="border-l-4 border-red-500 bg-red-950/30 p-3.5 rounded-xl text-slate-100 text-sm leading-relaxed">
+          «А теперь — самое главное. Никаких записанных видео. <strong>Смотрите прямо сейчас вживую!</strong><br><br>
+          Я держу в руках реальную накладную от ТОО "Прима Дистрибьюшн Тараз". Открываю бота Sanau.AI. Фотографирую лист... Отправляю.<br><br>
+          Раз... два... <strong>БУМ! Посмотрите на экран!</strong><br><br>
+          <em>(Пауза 1 секунда, жестом покажите на экран слайда)</em><br><br>
+          <strong class="text-red-400 text-base">КРАСНЫЙ АЛЕРТ РАДАРА!</strong> Система мгновенно сверила поставку с контрактом:<br>
+          <em>"Внимание! Оптовик поднял цену на Молоко 'Родина' на 15.4% — с 390 до 450 тенге. Мука 'Цесна' подорожала на 16.2% — с 680 до 790 тенге. Прямо сейчас на этой партии вы теряете 4 000 тенге чистой маржи!"</em><br><br>
+          И самое главное: Sanau.AI не просто нашел проблему. Он дает готовое решение: <em>"Рекомендуемая розничная цена на молоко — 540 тенге"</em>. Я нажимаю кнопку "Применить" — всё! Маржа спасена, ценники обновлены, данные улетели в Google Таблицу и 1C. Всего 2.5 секунды!»
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 5 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 font-black text-sm flex items-center justify-center border border-amber-500/30">5</span>
+          <h2 class="text-base font-bold text-white">Мультимодальность & Локальная специфика РК</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">1:55 – 2:20</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">🎬 Что делать спикеру:</span>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Покажите Лист №2 (Оптовик Аулие-Ата). Уверенно произнесите казахские торговые термины («құты», «қап», «дана»).
+        </p>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Почему зарубежные или российские сканеры бесполезны в Казахстане? Потому что они не знают специфику наших базаров!<br><br>
+          Вот накладная с оптового склада "Аулие-Ата" в Сахпоселке Тараза. Здесь нет слова "литры". Здесь написано: <strong>"құты", "қап", "дана", "күнбағыс майы"</strong>. И зарубежный софт падает в ошибку.<br><br>
+          А Sanau.AI нативно обучен понимать казахский язык и торговые реалии наших регионов! Более того — товароведу даже не нужно ничего фотографировать при разгрузке коробок. Он зажимает микрофон в Telegram и наговаривает голосом: <em>"Жиырма құты Шедевр майы сегіз жүз қырықтан келді..."</em> Наш аудио-движок моментально распознает речь и ставит товар на приход».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 6 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 font-black text-sm flex items-center justify-center border border-emerald-500/30">6</span>
+          <h2 class="text-base font-bold text-white">Рынок: TAM / SAM / SOM ($38M в РК)</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">2:20 – 2:40</span>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Кто наш рынок? Это огромный океан микробизнеса, о котором забыли корпоративные ERP.<br><br>
+          Только в Казахстане — <strong>160 000 торговых точек</strong>: магазины "у дома", придомовые аптеки, мясные и овощные лавки. Это наш достижимый рынок (SAM) объемом <strong>38 миллионов долларов в год</strong>.<br><br>
+          Если добавить Узбекистан и Кыргызстан с аналогичной культурой уличной торговли — рынок превышает <strong>120 миллионов долларов</strong>. Наша цель на первый год — занять первые 5 000 магазинов (SOM) с годовой выручкой 1.8 миллиона долларов».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 7 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 font-black text-sm flex items-center justify-center border border-indigo-500/30">7</span>
+          <h2 class="text-base font-bold text-white">Бизнес-модель & Юнит-экономика</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">2:40 – 3:00</span>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Модель предельно проста — классический SaaS по подписке с виральным входом:<br>
+          • <strong>Freemium:</strong> первые 50 накладных в месяц бесплатно, чтобы предприниматель ощутил магию экономии в первый же день.<br>
+          • <strong>Базовый тариф:</strong> 7 900 тенге в месяц — до 200 накладных.<br>
+          • <strong>Бизнес (Pro):</strong> 14 900 тенге в месяц — полный безлимит, интеграция с Kaspi Pay и экспорт в 1С.<br><br>
+          Стоимость привлечения одного магазина (CAC) через партнерские каналы оптовиков составляет <strong>12 000 тенге</strong>. Средний LTV за 14 месяцев жизни клиента — <strong>94 000 тенге</strong>. Соотношение <strong>LTV к CAC — почти 8 к 1</strong>! Клиент окупается меньше чем за 2 месяца, а сервис окупает свою подписку с первой же спасенной накладной».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 8 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-pink-500/20 text-pink-400 font-black text-sm flex items-center justify-center border border-pink-500/30">8</span>
+          <h2 class="text-base font-bold text-white">Конкурентное преимущество — Неприступный ров</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">3:00 – 3:20</span>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Почему нас не сдвинут 1С или Umag?<br>
+          Потому что Umag требует купить тяжелый POS-терминал, моноблок и сканеры за 350 000 тенге. Это непреодолимый барьер для 70% небольших магазинов.<br>
+          1С требует найма приходящего бухгалтера с окладом 150–200 тысяч тенге.<br><br>
+          <strong class="text-emerald-400">Порог входа в Sanau.AI — НОЛЬ тенге.</strong> Никакого оборудования, кроме смартфона в кармане. Никакого обучения: если продавец умеет отправлять голосовые в WhatsApp — он умеет пользоваться Sanau.AI».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 9 -->
+    <!-- ========================================================================= -->
+    <div class="bg-[#0e1628] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 font-black text-sm flex items-center justify-center border border-purple-500/30">9</span>
+          <h2 class="text-base font-bold text-white">Тракшн и реальные пилоты в Таразе</h2>
+        </div>
+        <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">3:20 – 3:40</span>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="quote-box p-3.5 rounded-xl text-slate-200 text-sm leading-relaxed">
+          «Мы пришли на хакатон не просто с идеей в вакууме. За последние две недели мы провели боевое пилотирование в <strong>12 реальных магазинах Тараза</strong>, включая магазин "Береке" в 1-м микрорайоне.<br><br>
+          Результаты говорят сами за себя:<br>
+          • Оцифровано более <strong>1 400 накладных</strong>.<br>
+          • Радар поймал <strong>86 скрытых подорожаний</strong>.<br>
+          • Мы спасли владельцам магазинов более <strong>450 000 тенге чистой маржи</strong>!<br>
+          Конверсия из пилотного режима в готовность платить ежемесячную подписку составила <strong>75%</strong>».
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- СЛАЙД 10: ФИНАЛ -->
+    <!-- ========================================================================= -->
+    <div class="bg-gradient-to-b from-[#111f38] to-[#0e1628] border border-indigo-500/40 rounded-2xl p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+      <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <span class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 text-white font-black text-sm flex items-center justify-center shadow-md shadow-indigo-500/30">10</span>
+          <h2 class="text-base font-extrabold text-white">Финал & Призыв к действию</h2>
+        </div>
+        <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800">3:40 – 4:00</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">🎬 Что делать спикеру:</span>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Сделайте полшага вперед. Максимальная энергия в голосе, искренняя улыбка. Руки открыты залу.
+        </p>
+      </div>
+
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 block mb-1.5">🗣 Что говорить (Слова спикера):</span>
+        <div class="border-l-4 border-indigo-500 bg-indigo-950/30 p-3.5 rounded-xl text-slate-100 text-sm leading-relaxed">
+          «За Sanau.AI стоит сильная инженерная команда, которая досконально знает боли локального ритейла и умеет создавать сверхбыстрые продукты.<br><br>
+          Магазины у дома кормят целые микрорайоны и наши семьи. Мы даем им финансовый щит, который защищает каждую копейку их честного труда.<br><br>
+          Отсканируйте QR-код, напишите боту "Сәлем" и проверьте Sanau.AI в действии прямо сейчас.<br><br>
+          <strong class="text-white text-base">Sanau.AI — считаем каждую копейку вашей прибыли.</strong><br>
+          Большое спасибо! Мы готовы ответить на любые ваши вопросы!»
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- БЛОК Q&A ДЛЯ ОТВЕТОВ ЖЮРИ -->
+    <!-- ========================================================================= -->
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
+      <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-800">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
+          🛡
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-white">Шпаргалка для вопросов жюри (Q&A)</h3>
+          <p class="text-[11px] text-slate-400">Готовые железобетонные ответы на топ-4 каверзных вопроса</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5">
+          <div class="font-bold text-amber-300 mb-1">1. «Что если накладная помята, запачкана или заполнена от руки?»</div>
+          <div class="text-slate-300 leading-relaxed">
+            «Мы используем Gemini 2.5 Flash с предварительной нормализацией изображения (автовыравнивание контраста, удаление бликов). Если уверенность (Confidence Score) ниже 90%, система не выдумывает цифру, а прямо подсвечивает ячейку желтым и переспрашивает: "Количество муки: 20 или 25?". В 95% случаев печатные накладные распознаются с точностью 99.2%».
+          </div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5">
+          <div class="font-bold text-amber-300 mb-1">2. «Какова себестоимость одного запроса? Не съест ли API всю маржу?»</div>
+          <div class="text-slate-300 leading-relaxed">
+            «Себестоимость обработки одного фото через оптимизированный контекст Gemini Flash составляет менее <strong>1.2 тенге</strong>. На тарифе за 14 900 тенге клиент загружает около 150 накладных в месяц — затраты на API составляют всего 180 тенге. Наша валовая маржинальность — <strong>более 95%</strong>».
+          </div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5">
+          <div class="font-bold text-amber-300 mb-1">3. «Зачем это, если оптовики выписывают электронные счета-фактуры (ЭСФ)?»</div>
+          <div class="text-slate-300 leading-relaxed">
+            «Водитель привозит товар в 7 утра, а бухгалтер оптовика оформляет ЭСФ через 3–5 рабочих дней. Выставлять розничный ценник на прилавок нужно прямо сейчас. Ждать ЭСФ — значит продавать 5 дней вслепую. Sanau.AI решает проблему оперативного учета в момент разгрузки машины».
+          </div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5">
+          <div class="font-bold text-amber-300 mb-1">4. «Как будете защищаться от Kaspi или 1С?»</div>
+          <div class="text-slate-300 leading-relaxed">
+            «1С невыгодно делать дешевые решения — их бизнес держится на дорогих франшизах и бухгалтерах. С Kaspi мы не воюем, а интегрируемся — отдаем товары в их каталог в один клик. Наш ров — это накопленная база региональных цен поставщиков, которой нет ни у кого».
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Скрипт секундомера -->
+  <script>
+    lucide.createIcons();
+
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    const display = document.getElementById('timer-display');
+    const btn = document.getElementById('timer-btn');
+
+    function updateDisplay() {
+      const mins = Math.floor(secondsElapsed / 60);
+      const secs = secondsElapsed % 60;
+      display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      
+      if (secondsElapsed >= 210) { // 3:30
+        display.classList.remove('text-emerald-400');
+        display.classList.add('text-red-400', 'animate-pulse');
+      } else {
+        display.classList.remove('text-red-400', 'animate-pulse');
+        display.classList.add('text-emerald-400');
+      }
+    }
+
+    function toggleTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.textContent = 'Старт';
+        btn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
+        btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+      } else {
+        timerInterval = setInterval(() => {
+          secondsElapsed++;
+          updateDisplay();
+        }, 1000);
+        btn.textContent = 'Пауза';
+        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+        btn.classList.add('bg-amber-600', 'hover:bg-amber-500');
+      }
+    }
+
+    function resetTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.textContent = 'Старт';
+        btn.classList.remove('bg-amber-600', 'hover:bg-amber-500');
+        btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+      }
+      secondsElapsed = 0;
+      updateDisplay();
+    }
+  </script>
+</body>
+</html>

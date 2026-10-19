@@ -110,6 +110,12 @@ def test_invoices_endpoints():
     assert resp_pdf.headers["content-type"] == "application/pdf"
     assert len(resp_pdf.content) > 10000
 
+def test_speaker_script_endpoint():
+    resp = client.get("/script")
+    assert resp.status_code == 200
+    assert "Речь спикера Sanau.AI" in resp.text
+    assert "КРАСНЫЙ АЛЕРТ" in resp.text
+
 if __name__ == "__main__":
     test_root_serves_miniapp()
     test_settings_flow()
@@ -120,4 +126,5 @@ if __name__ == "__main__":
     test_catalog_deletion_and_clear()
     test_presentation_endpoints()
     test_invoices_endpoints()
+    test_speaker_script_endpoint()
     print("ALL API AND MINI APP TESTS PASSED SUCCESSFULLY! 🚀")

@@ -118,6 +118,15 @@ async def serve_invoices_page():
         return HTMLResponse(content=invoices_html.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>Образцы накладных Sanau.AI загружаются...</h1>")
 
+@app.get("/script", response_class=HTMLResponse)
+@app.get("/speaker", response_class=HTMLResponse)
+@app.get("/speaker_script", response_class=HTMLResponse)
+async def serve_speaker_script():
+    script_html = STATIC_DIR / "speaker_script.html"
+    if script_html.exists():
+        return HTMLResponse(content=script_html.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Сценарий спикера Sanau.AI загружается...</h1>")
+
 @app.get("/invoices_for_jury_demo.pdf")
 @app.get("/invoices.pdf")
 @app.get("/api/export/invoices")
