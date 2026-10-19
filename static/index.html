@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
   <title>Sanau.AI — Товаровед & Радар маржи</title>
   
   <!-- Telegram Web App SDK -->
@@ -17,10 +19,15 @@
   <style>
     /* iOS smooth scrolling & tap highlight */
     * { -webkit-tap-highlight-color: transparent; }
+    
+    :root, html, body {
+      color-scheme: light !important;
+      background-color: #F8FAFC !important;
+      color: #0F172A !important;
+    }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--tg-theme-bg-color, #F8FAFC);
-      color: var(--tg-theme-text-color, #0F172A);
     }
     .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
@@ -32,11 +39,17 @@
       70% { box-shadow: 0 0 0 14px rgba(239, 68, 68, 0); }
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
-    /* Высокая контрастность текста во всех полях ввода (защита от темной темы Telegram) */
-    input, textarea, select {
+    
+    /* Принудительная контрастность: темный читаемый текст на белом фоне */
+    input, textarea, select,
+    input:focus, textarea:focus, select:focus,
+    input:active, textarea:active, select:active,
+    input:hover, textarea:hover, select:hover {
+      color-scheme: light !important;
       color: #0F172A !important;
       background-color: #FFFFFF !important;
       -webkit-text-fill-color: #0F172A !important;
+      caret-color: #0284C7 !important;
       opacity: 1 !important;
     }
     input::placeholder, textarea::placeholder {
@@ -274,7 +287,7 @@
         <!-- Поиск -->
         <div class="relative">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
-          <input type="text" id="catalog-search" oninput="filterCatalog()" placeholder="Поиск (Родина, Цесна, Шедевр)..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <input type="text" id="catalog-search" oninput="filterCatalog()" placeholder="Поиск (Родина, Цесна, Шедевр)..." style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-xs">
         </div>
 
         <!-- Кнопки управления каталогом -->
@@ -459,36 +472,36 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block font-semibold text-slate-700 mb-1">📊 Google Sheets (Webhook URL):</label>
-          <input type="text" id="setting-google-url" placeholder="https://script.google.com/macros/s/..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+          <input type="text" id="setting-google-url" placeholder="https://script.google.com/macros/s/..." style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
           <span class="text-[10px] text-slate-400">Строки прихода автоматически добавляются в таблицу</span>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">✈️ Telegram Chat ID (для алертов):</label>
-          <input type="text" id="setting-telegram-chat" placeholder="Ваш ID (например 589218321)" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+          <input type="text" id="setting-telegram-chat" placeholder="Ваш ID (например 589218321)" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
           <span class="text-[10px] text-slate-400">Сюда будут приходить срочные алерты о росте цен</span>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">🏢 1C / ERP Webhook URL:</label>
-          <input type="text" id="setting-webhook-url" placeholder="https://webhook.site/..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50">
+          <input type="text" id="setting-webhook-url" placeholder="https://webhook.site/..." style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">🤖 Telegram Bot Token (от @BotFather):</label>
-          <input type="password" id="setting-telegram-token" placeholder="Например: 7891234567:AAF..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 font-mono text-[11px]">
+          <input type="password" id="setting-telegram-token" placeholder="Например: 7891234567:AAF..." style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white font-mono text-[11px]">
           <span class="text-[10px] text-slate-400">Нужен, чтобы бот отвечал на /start, принимал фото и аудио</span>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">🟢 OpenAI API Key (GPT-4o-mini & Whisper):</label>
-          <input type="password" id="setting-openai-key" placeholder="sk-proj-..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50 font-mono text-[11px]">
+          <input type="password" id="setting-openai-key" placeholder="sk-proj-..." style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-mono text-[11px]">
           <span class="text-[10px] text-slate-400">Распознавание накладных через GPT-4o-mini и аудио через Whisper</span>
         </div>
 
         <div>
           <label class="block font-semibold text-slate-700 mb-1">🔑 Google Gemini API Key (Опционально):</label>
-          <input type="password" id="setting-gemini-key" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 font-mono text-[11px]">
+          <input type="password" id="setting-gemini-key" placeholder="AIzaSy..." style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white font-mono text-[11px]">
           <span class="text-[10px] text-slate-400">Резервный ключ Gemini Flash</span>
         </div>
       </div>
@@ -525,7 +538,7 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1.5">📝 Список товаров, количество и цена:</label>
-          <textarea id="text-intake-input" rows="5" placeholder="Например:&#10;Молоко Родина 20 шт по 440 тг&#10;Мука Цесна 10 кг 760 тг&#10;или по-казахски:&#10;20 сүт 440 теңгеден" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-medium text-xs leading-relaxed shadow-xs"></textarea>
+          <textarea id="text-intake-input" rows="5" placeholder="Например:&#10;Молоко Родина 20 шт по 440 тг&#10;Мука Цесна 10 кг 760 тг&#10;или по-казахски:&#10;20 сүт 440 теңгеден" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-medium text-xs leading-relaxed shadow-xs"></textarea>
           <span class="text-[11px] text-slate-500 mt-1 block">AI распознает любые форматы записей (русский и казахский языки).</span>
         </div>
 
@@ -575,23 +588,23 @@
       <div class="space-y-3.5 text-xs">
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">🏪 Название магазина:</label>
-          <input type="text" id="store-name-input" placeholder="Например: Магазин «Береке»" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="text" id="store-name-input" placeholder="Например: Магазин «Береке»" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
           <span class="text-[11px] text-slate-500 mt-0.5 block">Отображается в Telegram, чеках, 1С и Excel</span>
         </div>
 
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">📍 Город / Адрес торговой точки:</label>
-          <input type="text" id="store-city-input" placeholder="г. Тараз, 1-й микрорайон" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="text" id="store-city-input" placeholder="г. Тараз, 1-й микрорайон" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
         </div>
 
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">👤 Владелец / Ответственный товаровед:</label>
-          <input type="text" id="store-owner-input" placeholder="Имя (например: Азамат)" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="text" id="store-owner-input" placeholder="Имя (например: Азамат)" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
         </div>
 
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">📈 Желаемая наценка магазина (%):</label>
-          <input type="number" id="store-margin-input" placeholder="25" min="5" max="100" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="number" id="store-margin-input" placeholder="25" min="5" max="100" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
           <span class="text-[11px] text-slate-500 mt-0.5 block">Радар маржи использует эту цифру для расчета новой розницы при подорожании закупа</span>
         </div>
       </div>
@@ -671,6 +684,10 @@
       tg.ready();
       tg.expand();
       try { tg.enableClosingConfirmation(); } catch (e) {}
+      try {
+        if (tg.setHeaderColor) tg.setHeaderColor("#ffffff");
+        if (tg.setBackgroundColor) tg.setBackgroundColor("#f8fafc");
+      } catch (e) {}
     }
 
     let currentInvoice = null;
