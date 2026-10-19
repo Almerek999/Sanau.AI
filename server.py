@@ -73,7 +73,14 @@ app.add_middleware(
 async def serve_miniapp():
     index_file = STATIC_DIR / "index.html"
     if index_file.exists():
-        return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
+        return HTMLResponse(
+            content=index_file.read_text(encoding="utf-8"),
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
     return HTMLResponse("<h1>Sanau.AI Mini App загружается...</h1>")
 
 @app.get("/presentation", response_class=HTMLResponse)

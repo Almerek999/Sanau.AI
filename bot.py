@@ -52,8 +52,10 @@ class TelegramBotWorker:
         url = self.get_webapp_url()
         if url.startswith("https://"):
             try:
+                sep = "&" if "?" in url else "?"
+                busted_url = f"{url}{sep}t={int(time.time())}"
                 requests.post(f"https://api.telegram.org/bot{token}/setChatMenuButton", json={
-                    "menu_button": {"type": "web_app", "text": "📱 Открыть Mini App", "web_app": {"url": url}}
+                    "menu_button": {"type": "web_app", "text": "📱 Открыть Mini App", "web_app": {"url": busted_url}}
                 }, timeout=5)
             except Exception:
                 pass
@@ -86,7 +88,9 @@ class TelegramBotWorker:
     def _make_webapp_button(self, title: str = "📱 Открыть Mini App") -> Dict[str, Any]:
         url = self.get_webapp_url()
         if url.startswith("https://"):
-            return {"text": title, "web_app": {"url": url}}
+            sep = "&" if "?" in url else "?"
+            busted_url = f"{url}{sep}t={int(time.time())}"
+            return {"text": title, "web_app": {"url": busted_url}}
         else:
             return {"text": f"{title} (localhost:8000)", "callback_data": "miniapp_info"}
 
@@ -202,8 +206,10 @@ class TelegramBotWorker:
                     new_url = f"https://{new_url}"
                 set_setting("webapp_url", new_url)
                 try:
+                    sep = "&" if "?" in new_url else "?"
+                    busted_new_url = f"{new_url}{sep}t={int(time.time())}"
                     r = requests.post(f"https://api.telegram.org/bot{token}/setChatMenuButton", json={
-                        "menu_button": {"type": "web_app", "text": "📱 Открыть Mini App", "web_app": {"url": new_url}}
+                        "menu_button": {"type": "web_app", "text": "📱 Открыть Mini App", "web_app": {"url": busted_new_url}}
                     }, timeout=8)
                     if r.status_code == 200:
                         self._send_message(token, chat_id, f"✅ Кнопка Mini App в Telegram успешно обновлена!\n🌐 Новый адрес: {new_url}")

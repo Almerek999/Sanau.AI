@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="only light">
+  <meta name="supported-color-schemes" content="light">
   <meta name="theme-color" content="#ffffff">
   <title>Sanau.AI — Товаровед & Радар маржи</title>
   
@@ -21,9 +22,9 @@
     * { -webkit-tap-highlight-color: transparent; }
     
     :root, html, body {
-      color-scheme: light !important;
+      color-scheme: only light !important;
       background-color: #F8FAFC !important;
-      color: #0F172A !important;
+      color: #000000 !important;
     }
     
     body {
@@ -40,18 +41,36 @@
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
     
-    /* Принудительная контрастность: темный читаемый текст на белом фоне */
+    /* Принудительная контрастность: чистый черный текст на белом фоне */
     input, textarea, select,
     input:focus, textarea:focus, select:focus,
     input:active, textarea:active, select:active,
     input:hover, textarea:hover, select:hover {
-      color-scheme: light !important;
-      color: #0F172A !important;
+      color-scheme: only light !important;
+      color: #000000 !important;
       background-color: #FFFFFF !important;
-      -webkit-text-fill-color: #0F172A !important;
+      -webkit-text-fill-color: #000000 !important;
       caret-color: #0284C7 !important;
       opacity: 1 !important;
+      font-size: 16px !important;
+      line-height: 1.4 !important;
     }
+
+    @media (prefers-color-scheme: dark) {
+      :root, html, body {
+        color-scheme: only light !important;
+        background-color: #F8FAFC !important;
+        color: #000000 !important;
+      }
+      input, textarea, select,
+      input:focus, textarea:focus, select:focus {
+        color-scheme: only light !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        background-color: #FFFFFF !important;
+      }
+    }
+
     input::placeholder, textarea::placeholder {
       color: #64748B !important;
       -webkit-text-fill-color: #64748B !important;
@@ -588,23 +607,23 @@
       <div class="space-y-3.5 text-xs">
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">🏪 Название магазина:</label>
-          <input type="text" id="store-name-input" placeholder="Например: Магазин «Береке»" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="text" id="store-name-input" placeholder="Например: Магазин «Береке»" style="color: #000000 !important; -webkit-text-fill-color: #000000 !important; background-color: #ffffff !important; border: 2px solid #64748b !important; font-size: 16px !important;" class="w-full px-3.5 py-3 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-black font-bold shadow-xs">
           <span class="text-[11px] text-slate-500 mt-0.5 block">Отображается в Telegram, чеках, 1С и Excel</span>
         </div>
 
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">📍 Город / Адрес торговой точки:</label>
-          <input type="text" id="store-city-input" placeholder="г. Тараз, 1-й микрорайон" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="text" id="store-city-input" placeholder="г. Тараз, 1-й микрорайон" style="color: #000000 !important; -webkit-text-fill-color: #000000 !important; background-color: #ffffff !important; border: 2px solid #64748b !important; font-size: 16px !important;" class="w-full px-3.5 py-3 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-black font-bold shadow-xs">
         </div>
 
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">👤 Владелец / Ответственный товаровед:</label>
-          <input type="text" id="store-owner-input" placeholder="Имя (например: Азамат)" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="text" id="store-owner-input" placeholder="Имя (например: Азамат)" style="color: #000000 !important; -webkit-text-fill-color: #000000 !important; background-color: #ffffff !important; border: 2px solid #64748b !important; font-size: 16px !important;" class="w-full px-3.5 py-3 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-black font-bold shadow-xs">
         </div>
 
         <div>
           <label class="block font-bold text-slate-900 text-xs mb-1">📈 Желаемая наценка магазина (%):</label>
-          <input type="number" id="store-margin-input" placeholder="25" min="5" max="100" style="color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background-color: #ffffff !important;" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-300 focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-slate-900 font-bold text-sm shadow-xs">
+          <input type="number" id="store-margin-input" placeholder="25" min="5" max="100" style="color: #000000 !important; -webkit-text-fill-color: #000000 !important; background-color: #ffffff !important; border: 2px solid #64748b !important; font-size: 16px !important;" class="w-full px-3.5 py-3 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/20 bg-white text-black font-bold shadow-xs">
           <span class="text-[11px] text-slate-500 mt-0.5 block">Радар маржи использует эту цифру для расчета новой розницы при подорожании закупа</span>
         </div>
       </div>
@@ -696,8 +715,28 @@
     let audioChunks = [];
     let isRecording = false;
 
+    function enforceInputContrast() {
+      const inputs = document.querySelectorAll('input, textarea, select');
+      inputs.forEach(el => {
+        el.style.setProperty('color', '#000000', 'important');
+        el.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+        el.style.setProperty('background-color', '#ffffff', 'important');
+        el.style.setProperty('font-size', '16px', 'important');
+      });
+    }
+
     // Инициализация при старте
     document.addEventListener("DOMContentLoaded", () => {
+      enforceInputContrast();
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        ['input', 'focus', 'click', 'change', 'keydown'].forEach(evt => {
+          el.addEventListener(evt, () => {
+            el.style.setProperty('color', '#000000', 'important');
+            el.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+            el.style.setProperty('background-color', '#ffffff', 'important');
+          });
+        });
+      });
       lucide.createIcons();
       loadStoreProfile();
       loadSettings();
@@ -747,6 +786,11 @@
 
     function openStoreModal() {
       document.getElementById("store-modal").classList.remove("hidden");
+      enforceInputContrast();
+      setTimeout(() => {
+        const inp = document.getElementById("store-name-input");
+        if (inp) inp.focus();
+      }, 50);
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
     }
     function closeStoreModal() {
@@ -856,6 +900,7 @@
 
     function openSettingsModal() {
       document.getElementById("settings-modal").classList.remove("hidden");
+      enforceInputContrast();
     }
     function closeSettingsModal() {
       document.getElementById("settings-modal").classList.add("hidden");
@@ -905,6 +950,7 @@
     // ----------------- ТЕКСТОВАЯ ПРИЕМКА ТОВАРА -----------------
     function openTextIntakeModal() {
       document.getElementById("text-modal").classList.remove("hidden");
+      enforceInputContrast();
     }
     function closeTextIntakeModal() {
       document.getElementById("text-modal").classList.add("hidden");
