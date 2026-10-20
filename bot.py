@@ -5,7 +5,8 @@ import base64
 import requests
 import threading
 from typing import Dict, Any, Optional
-from database.db import get_setting, set_setting
+from database.db import get_setting, set_setting, get_connection
+from database.seed_data import seed
 from services.ai_engine import process_invoice, get_demo_sample_invoice
 from services.radar import to_float
 from services.connectors.manager import IntegrationManager
@@ -79,10 +80,17 @@ class TelegramBotWorker:
                     data = resp.json()
                     for update in data.get("result", []):
                         offset = update["update_id"] + 1
-                        self._handle_update(token, update)
+                        try:
+                            self._handle_update(token, update)
+                        except Exception as upd_err:
+                            import traceback
+                            print(f"❌ Ошибка обработки апдейта {update.get('update_id')}: {upd_err}")
+                            traceback.print_exc()
                 else:
                     time.sleep(2)
             except Exception as e:
+                import traceback
+                print(f"❌ Ошибка в цикле опроса Telegram getUpdates: {e}")
                 time.sleep(3)
 
     def _make_webapp_button(self, title: str = "📱 Открыть Mini App") -> Dict[str, Any]:
@@ -224,7 +232,6 @@ class TelegramBotWorker:
 
         # Команда /clear для полной очистки всех товаров и истории
         if msg_text.startswith("/clear"):
-            from database.db import get_connection, set_setting
             conn = get_connection()
             cursor = conn.cursor()
             cursor.execute("DELETE FROM invoice_items")
@@ -240,8 +247,6 @@ class TelegramBotWorker:
 
         # Команда /reset для сброса каталога к 12 эталонным товарам Тараза
         if msg_text.startswith("/reset"):
-            from database.seed_data import seed
-            from database.db import set_setting
             set_setting("catalog_cleared", "false")
             seed()
             self._send_message(token, chat_id, "🔄 *Каталог успешно сброшен к базовым 12 товарам Тараза.*")
